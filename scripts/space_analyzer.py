@@ -62,6 +62,69 @@ RAL_COLORS = {
 }
 
 # =============================================
+#  中英文字段映射表 (英文key → 中文列头)
+# =============================================
+FIELD_CN = {
+    "case_name":                "案例名称",
+    "space_type":               "空间类型",
+    "length_m":                 "空间总长度(m)",
+    "width_m":                  "空间宽度(m)",
+    "ceiling_height_m":         "层高(m)",
+    "net_area_m2":              "净使用面积(m²)",
+    "volume_m3":                "空间体积(m³)",
+    "num_windows":              "窗户数量(组)",
+    "window_wall_ratio":        "窗墙比",
+    "num_doors":                "门/出入口数量(个)",
+    "perimeter_m":              "围合周长(m)",
+    "enclosure_ratio":          "围合度",
+    "height_width_ratio":       "高宽比",
+    "length_width_ratio":       "长宽比",
+    "total_seats":              "总座位数(座)",
+    "furniture_density":        "家具密度",
+    "seating_density_per_m2":   "座位密度(座/m²)",
+    "color_temperature_K":      "色温_LLM判读(K)",
+    "color_scheme":             "色调方案",
+    "floor_material":           "地面材质",
+    "wall_material":            "墙面材质",
+    "ceiling_material":         "天花材质",
+    "color_1_hex":              "主色1-色值",
+    "color_1_ral":              "主色1-RAL编号",
+    "color_1_pct":              "主色1-面积占比(%)",
+    "color_2_hex":              "主色2-色值",
+    "color_2_ral":              "主色2-RAL编号",
+    "color_2_pct":              "主色2-面积占比(%)",
+    "color_3_hex":              "主色3-色值",
+    "color_3_ral":              "主色3-RAL编号",
+    "color_3_pct":              "主色3-面积占比(%)",
+    "lighting_type":            "灯具类型",
+    "num_visible_lights":       "可见灯具数量(个)",
+    "estimated_illuminance_lux":"估算照度(lux)",
+    "daylight_factor":          "采光系数",
+    "openness_score":           "开阔感评分",
+    "privacy_score":            "私密性评分",
+    "estimated_RT60_s":         "混响时间RT60(s)",
+    "cv_compactness":           "平面紧凑度",
+    "cv_rectangularity":        "平面矩形度",
+    "cv_convexity":             "平面凸性",
+    "cv_h_transparency":        "水平通透度",
+    "cv_v_transparency":        "垂直通透度",
+    "sem_shell_pct":            "语义-围护壳体占比(%)",
+    "sem_floor_pct":            "语义-地面占比(%)",
+    "sem_window_door_pct":      "语义-门窗占比(%)",
+    "sem_seating_pct":          "语义-座椅占比(%)",
+    "sem_work_surface_pct":     "语义-工作台面占比(%)",
+    "sem_storage_pct":          "语义-储物占比(%)",
+    "sem_plant_deco_pct":       "语义-植物装饰占比(%)",
+    "sem_lighting_pct":         "语义-照明占比(%)",
+    "cv_brightness":            "画面亮度(0-255)",
+    "cv_contrast":              "画面对比度(0-255)",
+    "cv_color_temperature_K":   "色温_CV计算(K)",
+    "cv_warmth_index":          "冷暖指数",
+    "cv_saturation":            "画面饱和度(0-255)",
+    "cv_depth_cue":             "纵深感",
+}
+
+# =============================================
 #  Mask2Former 模型 (延迟加载)
 # =============================================
 _M2F_MODEL = None
@@ -402,7 +465,7 @@ def run(plan_path, photo_paths, case_name, output_dir, llm_json=None, gen_report
     feat_count = len([k for k in row if k != "case_name"])
     print("\n  Total features: {}".format(feat_count))
 
-    # JSON
+    # JSON（英文 key，便于程序读取）
     json_path = os.path.join(output_dir, "features.json")
     with open(json_path, "w", encoding="utf-8") as fp:
         json.dump(row, fp, indent=2, ensure_ascii=False,
@@ -410,12 +473,26 @@ def run(plan_path, photo_paths, case_name, output_dir, llm_json=None, gen_report
                   else float(o) if isinstance(o, np.floating) else str(o))
     print("  -> {}".format(json_path))
 
-    # CSV
+    # JSON 中文版（中文 key + 单位，便于人类阅读）
+    row_cn = {}
+    for k, v in row.items():
+        cn_key = FIELD_CN.get(k, k)
+        row_cn[cn_key] = v
+    json_cn_path = os.path.join(output_dir, "features_cn.json")
+    with open(json_cn_path, "w", encoding="utf-8") as fp:
+        json.dump(row_cn, fp, indent=2, ensure_ascii=False,
+                  default=lambda o: int(o) if isinstance(o, np.integer)
+                  else float(o) if isinstance(o, np.floating) else str(o))
+    print("  -> {}".format(json_cn_path))
+
+    # CSV（中文列头，Excel 友好）
     csv_path = os.path.join(output_dir, "features.csv")
+    en_keys = list(row.keys())
+    cn_headers = [FIELD_CN.get(k, k) for k in en_keys]
     with open(csv_path, "w", newline="", encoding="utf-8-sig") as fp:
-        writer = csv.DictWriter(fp, fieldnames=list(row.keys()))
-        writer.writeheader()
-        writer.writerow(row)
+        writer = csv.writer(fp)
+        writer.writerow(cn_headers)
+        writer.writerow([row[k] for k in en_keys])
     print("  -> {}".format(csv_path))
 
     # HTML report (optional)

@@ -30,9 +30,10 @@
 
 import os, sys, argparse, time, json, csv
 
-# 同目录下的 space_analyzer
+# 同目录下的 space_analyzer + card_generator
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from space_analyzer import run as analyze_one
+from card_generator import generate_all_visuals, batch_generate_cards
 
 PLAN_PATTERNS = ["plan.jpg", "plan.jpeg", "plan.png", "plan.bmp",
                  "plan.tif", "plan.tiff", "平面图.jpg", "平面图.png"]
@@ -143,9 +144,13 @@ def run_batch(input_dir, output_dir, gen_report=False, target_case=None):
     ok = sum(1 for r in results if r["status"] == "OK")
     err = total - ok
     print("\n" + "#" * 65)
-    print("  Batch complete: {}/{} OK, {} errors".format(ok, total, err))
+    print("  Batch analysis complete: {}/{} OK, {} errors".format(ok, total, err))
     print("  Summary: {}".format(summary_path))
     print("#" * 65)
+
+    # 生成增强可视化 + 案例卡片
+    print("\n  Generating visualization cards...")
+    batch_generate_cards(output_dir)
 
 
 if __name__ == "__main__":
@@ -155,6 +160,12 @@ if __name__ == "__main__":
     parser.add_argument("--output-dir", required=True, help="输出根目录")
     parser.add_argument("--report", action="store_true", help="是否生成 HTML 报告")
     parser.add_argument("--case", default=None, help="只处理指定案例 (文件夹名)")
+    parser.add_argument("--cards-only", action="store_true",
+                        help="跳过分析，只重新生成卡片 (需 features.json 已存在)")
     args = parser.parse_args()
-    run_batch(args.input_dir, args.output_dir,
-              gen_report=args.report, target_case=args.case)
+    if args.cards_only:
+        # 仅重新生成卡片，不重跑分析
+        batch_generate_cards(args.output_dir)
+    else:
+        run_batch(args.input_dir, args.output_dir,
+                  gen_report=args.report, target_case=args.case)

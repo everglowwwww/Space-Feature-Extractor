@@ -21,6 +21,10 @@ __pycache__/
 .venv/
 env/
 
+# Input files (案例原始素材，不需要版本控制)
+input/*
+!input/.gitkeep
+
 # Output files (每次运行重新生成，不需要版本控制)
 output/*
 !output/.gitkeep
