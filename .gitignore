@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# Backups
+*.bak
+
+# Temp files
+/tmp/
+*.tmp
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+env/
+
+# Output files (每次运行重新生成，不需要版本控制)
+output/*
+!output/.gitkeep
+
+# 大型模型文件
+*.pt
+*.pth
+*.onnx
+*.bin

@@ -1,0 +1,58 @@
+﻿field,中文名,单位,来源,类型,说明
+case_name,案例名称,-,用户指定,文本,案例唯一标识
+space_type,空间类型,-,LLM,文本,如共享办公-休闲协作区、独立工位区等
+length_m,空间总长度,m,LLM,数值,空间最长方向尺寸
+width_m,空间宽度,m,LLM,数值,空间较短方向尺寸
+ceiling_height_m,层高,m,LLM,数值,地面到天花板净高
+net_area_m2,净使用面积,m²,LLM,数值,去除墙体后的可用地面面积
+volume_m3,空间体积,m³,LLM,数值,净面积 × 层高
+num_windows,窗户数量,组,LLM,整数,独立窗组数量
+window_wall_ratio,窗墙比,-,LLM,数值,"窗面积/围护面总面积, 办公推荐0.30-0.50"
+num_doors,门/出入口数量,个,LLM,整数,含开放式通道
+perimeter_m,围合周长,m,LLM,数值,空间平面轮廓周长
+enclosure_ratio,围合度,-,LLM,数值,"0=完全开放, 0.5=半开放, 1=完全封闭"
+height_width_ratio,高宽比,-,LLM,数值,"层高/宽度, 0.5-0.7舒适"
+length_width_ratio,长宽比,-,LLM,数值,"1.0=正方, >2.5=狭长"
+total_seats,总座位数,座,LLM,整数,空间内所有可坐座位总数
+furniture_density,家具密度,-,LLM,数值,"家具投影面积/净地面积, 0.2宽松, 0.3-0.4适中"
+seating_density_per_m2,座位密度,座/m²,LLM,数值,"座位数/净面积, 人均>3m²宽松, <2m²拥挤"
+color_temperature_K,色温(LLM判读),K,LLM,整数,"2700K暖白, 4000K中性白, 6500K日光白"
+color_scheme,色调方案,-,LLM,文本,如暖中性色调、冷灰色调等
+floor_material,地面材质,-,LLM,文本,主要地面饰面材质
+wall_material,墙面材质,-,LLM,文本,主要墙面饰面材质
+ceiling_material,天花材质,-,LLM,文本,主要天花饰面材质
+color_1_hex,主色1-色值,-,LLM,文本,面积占比最大的颜色HEX值
+color_1_ral,主色1-RAL编号,-,LLM,文本,最近似RAL标准色号
+color_1_pct,主色1-面积占比,%,LLM,数值,该色在空间中的视觉面积占比
+color_2_hex,主色2-色值,-,LLM,文本,面积占比第二的颜色HEX值
+color_2_ral,主色2-RAL编号,-,LLM,文本,最近似RAL标准色号
+color_2_pct,主色2-面积占比,%,LLM,数值,该色在空间中的视觉面积占比
+color_3_hex,主色3-色值,-,LLM,文本,面积占比第三的颜色HEX值
+color_3_ral,主色3-RAL编号,-,LLM,文本,最近似RAL标准色号
+color_3_pct,主色3-面积占比,%,LLM,数值,该色在空间中的视觉面积占比
+lighting_type,灯具类型,-,LLM,文本,主要灯具形式，如吊灯、筒灯、灯带
+num_visible_lights,可见灯具数量,个,LLM,整数,透视照中可数的灯具数
+estimated_illuminance_lux,估算照度,lux,LLM,整数,"100走廊, 300休闲, 500办公"
+daylight_factor,采光系数,-,LLM,数值,"0.02最低, 0.035良好, >0.05优秀"
+openness_score,开阔感评分,-,LLM,数值,"0.3封闭, 0.5标准, 0.7开放大厅"
+privacy_score,私密性评分,-,LLM,数值,"0全开放, 0.5有隔断, 1全封闭"
+estimated_RT60_s,混响时间RT60,s,LLM,数值,"0.6-0.8办公推荐, >1.5体育馆级"
+cv_compactness,平面紧凑度,-,OpenCV,数值,"4πA/P², 圆=1, 正方形≈0.785, 越小越不规则"
+cv_rectangularity,平面矩形度,-,OpenCV,数值,"面积/最小外接矩形, 1=完美矩形"
+cv_convexity,平面凸性,-,OpenCV,数值,"面积/凸包面积, 1=完全凸, <0.9有凹角"
+cv_h_transparency,水平通透度,-,OpenCV,数值,"水平方向无遮挡连续比例, 0.7=通透"
+cv_v_transparency,垂直通透度,-,OpenCV,数值,"垂直方向无遮挡连续比例, 0.7=通透"
+sem_shell_pct,语义-围护壳体占比,%,Mask2Former,数值,墙面+天花板+柱子在画面中的面积占比
+sem_floor_pct,语义-地面占比,%,Mask2Former,数值,可见地面面积占比
+sem_window_door_pct,语义-门窗占比,%,Mask2Former,数值,窗户+门在画面中的面积占比
+sem_seating_pct,语义-座椅占比,%,Mask2Former,数值,椅子/沙发/凳子在画面中的面积占比
+sem_work_surface_pct,语义-工作台面占比,%,Mask2Former,数值,桌子/台面在画面中的面积占比
+sem_storage_pct,语义-储物占比,%,Mask2Former,数值,柜子/书架/储物架在画面中的面积占比
+sem_plant_deco_pct,语义-植物装饰占比,%,Mask2Former,数值,绿植/花卉/装饰品在画面中的面积占比
+sem_lighting_pct,语义-照明占比,%,Mask2Former,数值,灯具在画面中的面积占比
+cv_brightness,画面亮度,0-255,OpenCV,数值,"V通道均值, 80昏暗, 130一般, 165明亮"
+cv_contrast,画面对比度,0-255,OpenCV,数值,"V通道标准差, 25均匀, 45正常, 70强对比"
+cv_color_temperature_K,色温(CV计算),K,OpenCV,整数,"RGB比值推算, 3000K暖白, 6500K日光"
+cv_warmth_index,冷暖指数,-,OpenCV,数值,"暖色%-冷色%, -10冷调, 0中性, +10暖调"
+cv_saturation,画面饱和度,0-255,OpenCV,数值,"S通道均值, 30素雅, 50自然, 100鲜艳"
+cv_depth_cue,纵深感,-,OpenCV,数值,"近/远梯度比, <1扁平, 1中性, >1.5强纵深"
