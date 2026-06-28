@@ -1,17 +1,34 @@
 #!/usr/bin/env python3
 """
-共享办公空间分析器 v7 — Skill 版
+共享办公空间分析器 v8 — Skill 版
 =================================
 阶段 B: 读取 LLM JSON + 平面图 + 透视照 → 56 特征 + 可视化图片
 
+输入要求:
+  必须:  平面图 PNG/JPG (白底黑线) + 至少 1 张人视角照片
+  推荐:  DXF 文件 (精确尺度来源，需在阶段 A 中用 ezdxf 解析后写入 llm_understanding.json)
+  注意:  不支持 DWG 格式，请在 CAD 软件中另存为 DXF
+
 用法:
+  HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
   python3 space_analyzer.py \
-    --plan input/plan.jpg \
-    --photos input/photo_01.png input/photo_02.png \
-    --llm-json output/llm_understanding.json \
-    --name "案例01_WeWork" \
-    --out output/案例01_WeWork/ \
+    --plan input/plan.png \
+    --photos input/photo_01.jpg input/photo_02.jpg \
+    --llm-json input/llm_understanding.json \
+    --name "北京 盈科中心-5" \
+    --out output/北京 盈科中心-5/ \
     [--report]
+
+产出:
+  features.json       56 个特征 (英文 key)
+  features_cn.json    56 个特征 (中文 key + 单位)
+  features.csv        表格版 (Excel 友好)
+  plan_binary.png     平面图二值化 (白底黑线)
+  seg_semantic_XX.png 语义分割纯色图 (每张照片)
+  seg_overlay_XX.png  语义分割叠加图 (每张照片，含图例标注)
+
+环境变量:
+  设置 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 避免 HuggingFace 联网检查超时
 """
 
 import os, sys, json, csv, math, warnings, argparse
@@ -246,7 +263,19 @@ def analyze_plan_cv(img_path, output_dir=None):
     total_px = h * w
     f = {}
 
-    _, binary = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY_INV)
+    # 自动检测图片底色：统计边缘像素亮度来判断是白底黑线还是黑底白线
+    border_pixels = np.concatenate([
+        gray[0, :], gray[-1, :], gray[:, 0], gray[:, -1]
+    ])
+    border_mean = float(np.mean(border_pixels))
+
+    if border_mean > 128:
+        # 白底黑线（标准工程图）→ 用 BINARY 使线条=255、背景=0
+        _, binary = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY_INV)
+    else:
+        # 黑底白线（反色图/CAD截图）→ 用 BINARY 使线条=255、背景=0
+        _, binary = cv2.threshold(gray, 75, 255, cv2.THRESH_BINARY)
+
     contours_ext, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if contours_ext:
         mc = max(contours_ext, key=cv2.contourArea)
@@ -273,9 +302,11 @@ def analyze_plan_cv(img_path, output_dir=None):
     f["cv_h_transparency"] = round(_scan_transparency(binary, "h"), 4)
     f["cv_v_transparency"] = round(_scan_transparency(binary, "v"), 4)
 
-    # 保存二值化图片
+    # 保存二值化图片（保持原始方向：黑线白底）
     if output_dir:
-        bin_rgb = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
+        # 输出时统一为白底黑线（人类友好），即线条=0、背景=255
+        display_binary = cv2.bitwise_not(binary)
+        bin_rgb = cv2.cvtColor(display_binary, cv2.COLOR_GRAY2RGB)
         cv2.imwrite(os.path.join(output_dir, "plan_binary.png"), bin_rgb)
 
     return f
@@ -301,15 +332,13 @@ def _max_consecutive(arr):
 def analyze_semantics(photo_paths, output_dir=None):
     if not photo_paths:
         return {}, None
-    all_sem, first_seg = [], None
-    first_photo_path = None
+    all_sem = []
+    all_segs = []       # 保存每张照片的分割结果
     for p in photo_paths:
         try:
             pcts, seg = run_mask2former(p)
             all_sem.append(pcts)
-            if first_seg is None:
-                first_seg = seg
-                first_photo_path = p
+            all_segs.append((p, seg))
         except Exception as e:
             print("    Warning: {}".format(e))
     if not all_sem:
@@ -320,20 +349,110 @@ def analyze_semantics(photo_paths, output_dir=None):
         vals = [s.get(gn, 0) for s in all_sem]
         f["sem_{}_pct".format(gn)] = round(np.mean(vals), 2)
 
-    # 保存语义分割可视化图片
-    if output_dir and first_seg is not None and first_photo_path:
-        from PIL import Image as PILImage
-        photo_arr = np.array(PILImage.open(first_photo_path).convert("RGB"))
-        seg_color = np.zeros_like(photo_arr)
-        for cid in np.unique(first_seg):
-            gn = _CID_TO_GROUP.get(cid, "other")
-            seg_color[first_seg == cid] = GROUP_PALETTE.get(gn, (140,140,140))
-        overlay = (photo_arr * 0.35 + seg_color * 0.65).astype(np.uint8)
-        cv2.imwrite(os.path.join(output_dir, "seg_semantic.png"),
-                    cv2.cvtColor(seg_color, cv2.COLOR_RGB2BGR))
-        cv2.imwrite(os.path.join(output_dir, "seg_overlay.png"),
-                    cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
+    # 为每张照片都保存语义分割可视化
+    if output_dir and all_segs:
+        from PIL import Image as PILImage, ImageDraw, ImageFont
+        for idx, (photo_path, seg_map) in enumerate(all_segs):
+            photo_arr = np.array(PILImage.open(photo_path).convert("RGB"))
+            seg_color = np.zeros_like(photo_arr)
+            # 统计本张图实际出现的语义组及占比
+            total_px = seg_map.shape[0] * seg_map.shape[1]
+            present_groups = {}
+            for cid in np.unique(seg_map):
+                gn = _CID_TO_GROUP.get(cid, "other")
+                seg_color[seg_map == cid] = GROUP_PALETTE.get(gn, (140,140,140))
+                px_count = int(np.sum(seg_map == cid))
+                present_groups[gn] = present_groups.get(gn, 0) + px_count
+            overlay = (photo_arr * 0.35 + seg_color * 0.65).astype(np.uint8)
 
+            # --- 绘制图例面板 ---
+            overlay_pil = PILImage.fromarray(overlay)
+            img_w, img_h = overlay_pil.size
+
+            # 按占比从大到小排序图例条目
+            legend_items = sorted(present_groups.items(), key=lambda x: -x[1])
+            legend_items = [(gn, cnt) for gn, cnt in legend_items if cnt / total_px > 0.005]
+
+            # 图例布局参数
+            swatch_size = 18
+            line_height = 28
+            font_size = 16
+            legend_padding = 12
+            legend_h = legend_padding * 2 + len(legend_items) * line_height
+
+            # 尝试加载中文字体
+            font = None
+            for fp in [
+                "/System/Library/Fonts/STHeiti Medium.ttc",
+                "/System/Library/Fonts/PingFang.ttc",
+                "/System/Library/Fonts/Hiragino Sans GB.ttc",
+                "/System/Library/Fonts/Supplemental/Songti.ttc",
+                "/System/Library/Fonts/STHeiti Light.ttc",
+            ]:
+                if os.path.exists(fp):
+                    try:
+                        font = ImageFont.truetype(fp, font_size)
+                        break
+                    except Exception:
+                        continue
+            if font is None:
+                try:
+                    font = ImageFont.truetype("DejaVuSans.ttf", font_size)
+                except Exception:
+                    font = ImageFont.load_default()
+
+            # 计算图例宽度（按最长文本）
+            temp_draw = ImageDraw.Draw(overlay_pil)
+            max_text_w = 0
+            for gn, cnt in legend_items:
+                pct = cnt / total_px * 100
+                label = "{} {:.1f}%".format(GROUP_CN.get(gn, gn), pct)
+                bbox = temp_draw.textbbox((0, 0), label, font=font)
+                tw = bbox[2] - bbox[0]
+                max_text_w = max(max_text_w, tw)
+            legend_w = legend_padding + swatch_size + 8 + max_text_w + legend_padding
+
+            # 在右下角绘制半透明背景
+            legend_x = img_w - legend_w - 10
+            legend_y = img_h - legend_h - 10
+            # 创建半透明背景层
+            bg_layer = PILImage.new("RGBA", overlay_pil.size, (0, 0, 0, 0))
+            bg_draw = ImageDraw.Draw(bg_layer)
+            bg_draw.rounded_rectangle(
+                [legend_x - 2, legend_y - 2, legend_x + legend_w + 2, legend_y + legend_h + 2],
+                radius=8, fill=(0, 0, 0, 160)
+            )
+            overlay_pil = overlay_pil.convert("RGBA")
+            overlay_pil = PILImage.alpha_composite(overlay_pil, bg_layer)
+            draw = ImageDraw.Draw(overlay_pil)
+
+            # 绘制每个图例条目
+            cy = legend_y + legend_padding
+            for gn, cnt in legend_items:
+                pct = cnt / total_px * 100
+                color_rgb = GROUP_PALETTE.get(gn, (140, 140, 140))
+                label = "{} {:.1f}%".format(GROUP_CN.get(gn, gn), pct)
+                # 色块
+                sx = legend_x + legend_padding
+                draw.rounded_rectangle(
+                    [sx, cy + 2, sx + swatch_size, cy + 2 + swatch_size],
+                    radius=3, fill=color_rgb, outline=(255, 255, 255, 180), width=1
+                )
+                # 文字
+                draw.text((sx + swatch_size + 8, cy + 1), label,
+                          fill=(255, 255, 255, 240), font=font)
+                cy += line_height
+
+            overlay_out = overlay_pil.convert("RGB")
+
+            # 编号：单张时不带后缀保持兼容，多张时带 _01 _02 ...
+            suffix = "_{:02d}".format(idx + 1) if len(all_segs) > 1 else ""
+            cv2.imwrite(os.path.join(output_dir, "seg_semantic{}.png".format(suffix)),
+                        cv2.cvtColor(seg_color, cv2.COLOR_RGB2BGR))
+            overlay_out.save(os.path.join(output_dir, "seg_overlay{}.png".format(suffix)))
+        print("    {} photo(s) segmented".format(len(all_segs)))
+
+    first_seg = all_segs[0][1] if all_segs else None
     return f, first_seg
 
 # =============================================
@@ -437,7 +556,6 @@ def run(plan_path, photo_paths, case_name, output_dir, llm_json=None, gen_report
         sem_f, seg_map = analyze_semantics(photo_paths, output_dir)
         row.update(sem_f)
         if sem_f:
-            print("    seg_semantic.png + seg_overlay.png saved")
             top3 = sorted(sem_f.items(), key=lambda x: -x[1])[:3]
             for k, v in top3:
                 gn = k.replace("sem_","").replace("_pct","")
@@ -510,11 +628,14 @@ def run(plan_path, photo_paths, case_name, output_dir, llm_json=None, gen_report
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Space Analyzer v7 — 共享办公空间特征提取 (阶段B)")
-    parser.add_argument("--plan", required=True, help="平面图路径")
-    parser.add_argument("--photos", nargs="+", default=[], help="透视照路径 (可多张)")
-    parser.add_argument("--llm-json", default=None, help="LLM 空间理解 JSON 路径")
-    parser.add_argument("--name", default=None, help="案例名称")
+        description="Space Analyzer v8 — 共享办公空间特征提取 (阶段B)。"
+                    "输入: 平面图PNG + 人视角照片(1-2张) + LLM理解JSON(含DXF精确数据或家具标定法估算)。"
+                    "输出: 56个标准化特征(JSON/CSV) + 可视化图片(二值化平面图 + 语义分割叠加图含图例)。"
+                    "运行前请设置 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 避免联网超时。")
+    parser.add_argument("--plan", required=True, help="平面图路径 (PNG/JPG, 白底黑线)")
+    parser.add_argument("--photos", nargs="+", default=[], help="人视角照片路径 (可多张，建议2张不同角度)")
+    parser.add_argument("--llm-json", default=None, help="阶段A产出的 LLM 空间理解 JSON 路径")
+    parser.add_argument("--name", default=None, help="案例名称 (如 '北京 盈科中心-5')")
     parser.add_argument("--out", required=True, help="输出目录")
     parser.add_argument("--report", action="store_true", help="生成 HTML 报告")
     args = parser.parse_args()
