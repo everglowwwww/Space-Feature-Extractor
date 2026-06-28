@@ -71,13 +71,16 @@ LLM（如 Claude/GPT-4o）同时看平面图和透视照，通过视觉认知理
 ~/.catpaw/skills/space-feature-extractor/   ← Skill 根目录（代码+数据一体化）
 ├── SKILL.md                                ← Skill 入口文档
 ├── references/                             ← 参考文档
-│   ├── PRD_空间分析管线.md                 ← 本文档
-│   ├── llm_prompt_template.md              ← 阶段A LLM提示词模板
-│   ├── feature_dictionary.json             ← 56字段中英文对照表
-│   └── feature_dictionary.csv              ← 同上CSV版
+│   ├── PRD_空间分析管线.md                 ← 本文档（技术实现层面）
+│   ├── 研究方法论.md                      ← 研究设计方法论（壳子陈设分离、聚类原型、边界定义）
+│   ├── llm_prompt_template.md              ← 阶段A LLM提示词模板
+│   ├── feature_dictionary.json             ← 56字段中英文对照表
+│   └── feature_dictionary.csv              ← 同上CSV版
 ├── scripts/                                ← 脚本
-│   ├── space_analyzer.py                   ← 阶段B核心分析脚本
-│   └── batch_analyze.py                    ← 批量处理脚本
+│   ├── space_analyzer.py                   ← 阶段B核心分析脚本
+│   ├── batch_analyze.py                    ← 批量处理脚本
+│   ├── plan_splitter.py                    ← 平面图拆分预处理工具
+│   └── card_generator.py                   ← 案例卡片可视化生成器
 │
 ├── input/                                  ← 所有案例的输入素材
 │   └── 案例01_WeWork/                      ← ✅ 示例案例（已填充真实数据）
@@ -335,5 +338,8 @@ python3 $SKILL/scripts/batch_analyze.py \
 | M1 | Demo 验证：单案例跑通完整流程（案例01_WeWork, 56特征, 8秒） | ✅ 已完成 |
 | M2 | 特征精简：142 → 56 个 | ✅ 已完成 |
 | M3 | Skill 开发：封装为 CatDesk Skill + PRD + 示例数据 | ✅ 已完成 |
-| M4 | 批量采集：100+ 案例数据采集 | ⏳ 待开始 |
-| M5 | 数据分析：统计建模与可视化 | ⏳ 待开始 |
+| M4 | 平面图拆分器：plan_splitter.py（分析→预览→裁切） | ✅ 已完成 |
+| M5 | 方法论文档：研究方法论.md（壳子-陈设分离、聚类原型、边界定义） | ✅ 已完成 |
+| M6 | 批量采集：~40 个空间单元案例数据采集 | ⏳ 待开始 |
+| M7 | 壳子参数聚类分析，提取典型原型空间 | ⏳ 待开始 |
+| M8 | 数据分析：统计建模与可视化 | ⏳ 待开始 |
