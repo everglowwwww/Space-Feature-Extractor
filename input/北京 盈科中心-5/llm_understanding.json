@@ -1,0 +1,181 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米），语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：墙体(5段)、桌子(4张)、椅子(18把)、柜子(2组)、虚线(3段)",
+        "椅子尺寸 DXF=0.40×0.40m（家具标定法估算0.45m，偏差12%）",
+        "桌子尺寸 DXF=1.0×2.0m / 1.0×1.6m（家具标定法估算1.12×1.78m，偏差~10%）",
+        "空间尺寸 DXF=9.70×4.70m（家具标定法估算10.7×5.2m，偏差~10%）"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长23.50m/总周长28.80m=0.82。语义数据（色彩材质光环境感知）来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2026-06-28"
+  },
+
+  "空间基本信息": {
+    "space_name": "北京 盈科中心-5",
+    "space_type": "共享办公-休闲协作/餐饮区",
+    "space_type_en": "coworking-lounge-dining"
+  },
+
+  "空间绝对尺度": {
+    "length_m": 9.70,
+    "width_m": 4.70,
+    "ceiling_height_m": 2.9,
+    "net_floor_area_m2": 45.59,
+    "volume_m3": 132.2
+  },
+
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": 0.0,
+    "num_doors": 0,
+    "perimeter_m": 28.80,
+    "enclosure_ratio": 0.82
+  },
+
+  "空间比例": {
+    "height_width_ratio": 0.62,
+    "length_width_ratio": 2.06
+  },
+
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "长方形工作桌（大）",
+        "material": "浅色木质",
+        "count": 1,
+        "dimensions_m": "1.00×2.00",
+        "footprint_m2": 2.00,
+        "seats": 6
+      },
+      {
+        "type": "长方形工作桌（中）",
+        "material": "浅色木质",
+        "count": 2,
+        "dimensions_m": "1.00×1.60",
+        "footprint_m2": 1.60,
+        "seats": 6
+      },
+      {
+        "type": "靠墙长条桌/吧台桌",
+        "material": "浅色木质",
+        "count": 1,
+        "dimensions_m": "0.50×3.50",
+        "footprint_m2": 1.75,
+        "seats": 0
+      },
+      {
+        "type": "紧凑餐椅/办公椅",
+        "material": "黑色金属框架",
+        "count": 18,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1
+      },
+      {
+        "type": "储物柜组A",
+        "material": "黑色金属",
+        "count": 1,
+        "dimensions_m": "0.50×2.06",
+        "footprint_m2": 1.03,
+        "seats": 0
+      },
+      {
+        "type": "储物柜组B",
+        "material": "黑色金属",
+        "count": 1,
+        "dimensions_m": "0.50×2.24",
+        "footprint_m2": 1.12,
+        "seats": 0
+      }
+    ],
+    "total_furniture_footprint_m2": 11.98,
+    "total_seats": 18,
+    "furniture_density": 0.26,
+    "seating_density_per_m2": 0.39
+  },
+
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "暖灰色",
+        "hex": "#B0A89E",
+        "pantone_approx": "Pantone Warm Gray 5 C",
+        "ral_approx": "RAL 7032",
+        "area_pct": 30,
+        "location": "天花板、地面"
+      },
+      {
+        "rank": 2,
+        "color_name": "明亮黄色",
+        "hex": "#F5C518",
+        "pantone_approx": "Pantone 116 C",
+        "ral_approx": "RAL 1023",
+        "area_pct": 20,
+        "location": "左侧大面积亮黄色光面墙"
+      },
+      {
+        "rank": 3,
+        "color_name": "回收木棕色",
+        "hex": "#8B6D52",
+        "pantone_approx": "Pantone 7519 C",
+        "ral_approx": "RAL 8024",
+        "area_pct": 18,
+        "location": "拼贴回收木板墙面、隔断"
+      },
+      {
+        "rank": 4,
+        "color_name": "深灰/炭黑色",
+        "hex": "#3C3C3C",
+        "pantone_approx": "Pantone Black 7 C",
+        "ral_approx": "RAL 7016",
+        "area_pct": 15,
+        "location": "储物柜、天花管线、椅架、墙面"
+      },
+      {
+        "rank": 5,
+        "color_name": "浅木色",
+        "hex": "#D4B896",
+        "pantone_approx": "Pantone 726 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 12,
+        "location": "桌面、木饰面墙面"
+      },
+      {
+        "rank": 6,
+        "color_name": "米白色",
+        "hex": "#F0EBE0",
+        "pantone_approx": "Pantone 7527 C",
+        "ral_approx": "RAL 9001",
+        "area_pct": 5,
+        "location": "地面、局部墙面"
+      }
+    ],
+    "color_temperature_K": 3500,
+    "color_scheme": "暖工业混搭风：亮黄撞色 + 回收木 + 工业灰，活力与自然感并存",
+    "primary_floor_material": "浅灰色自流平/微水泥",
+    "primary_wall_material": "光面烤漆（黄色）+ 回收实木拼贴板 + 深灰涂料",
+    "primary_ceiling_material": "灰色涂料裸露管线（工业风）"
+  },
+
+  "光环境": {
+    "lighting_type": "编织球形吊灯（装饰主灯）+ 筒灯（辅助照明）+ 轨道灯",
+    "num_visible_lights": 6,
+    "estimated_illuminance_lux": 350,
+    "daylight_factor_est": 0.01
+  },
+
+  "空间感知指标": {
+    "openness_score": 0.55,
+    "privacy_score": 0.35,
+    "estimated_RT60_s": 0.7
+  }
+}
