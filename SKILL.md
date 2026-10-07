@@ -54,7 +54,9 @@ $SKILL_DIR/
 | `scripts/space_analyzer.py` | 阶段B：OpenCV + Mask2Former → 56 特征 + 图 | cv2/torch/transformers |
 | `scripts/gen_manifest.py` | 扫 input → 更新 manifest.csv + input_rename_map.csv | 标准库 |
 | `scripts/apply_restructure.py` | 改名/标准化/建占位/建 output 骨架/归档（幂等） | 标准库 |
-| `scripts/cluster_spaces.py` | **壳子聚类 → 典型原型**（M7，可复用、mode 可插拔） | sklearn + matplotlib |
+| `scripts/cluster_spaces.py` | **聚类 → 典型原型**（M7，mode 可插拔：shell/furnishing/function/style） | sklearn + matplotlib + pandas |
+| `scripts/make_cluster_report.py` | 聚类汇报 + 高级可视化（读 cluster_summary.json） | matplotlib |
+| `scripts/git_sync.py` | **一键提交并同步到 GitHub**（含数据强制入库 + 密钥安全检查） | git |
 | `scripts/batch_analyze.py` | 一次性全量跑阶段B（旧方式，次要） | 同 space_analyzer |
 
 ## 三-b、聚类与原型提取（M7）
@@ -156,6 +158,21 @@ python scripts/run_pipeline.py --report           # 阶段B额外生成 HTML 报
   python scripts/apply_restructure.py  # ② 标准化命名 + 补 output 骨架（可 --dry-run 预览）
   python scripts/run_pipeline.py       # ③ 增量分析新增
   ```
+
+## 七-b、版本管理（同步到 GitHub）
+
+仓库：`https://github.com/everglowwwww/Space-Feature-Extractor.git`（本 skill 目录即 git 仓库根）。
+
+```bash
+python scripts/git_sync.py --dry-run                 # 先看将要提交什么（只预览）
+python scripts/git_sync.py -m "说明" --push           # 提交并推送（推荐）
+python scripts/git_sync.py -m "说明" --push --no-data # 只提交代码/文档，不含数据
+```
+
+- **自动处理数据**：`input/`、`output/` 在 `.gitignore` 中被忽略，本脚本会自动 `git add -f input output` 强制入库——**不必手动记这一步**。
+- **安全检查**：`config/deepseek.json`（API 密钥）与 `_restore_backup/`（冗余备份）若被误暂存，脚本会**中止并不提交**。
+- 提交前会打印 `新增/修改/删除/重命名` 统计；推送后打印 `领先/落后`（`0 0`=完全同步）。
+- 说明：`_legacy/`（旧示例归档）与 `manifest.csv`、汇报产物会一并入库；`_restore_backup/` 不入库。
 
 ## 八、字段参考
 
