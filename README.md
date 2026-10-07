@@ -1,56 +1,54 @@
-# Space Feature Extractor — 共享办公空间特征提取工具
+# Space Feature Extractor — 共享办公空间特征提取与聚类分析
 
-> 硕士论文《共享办公型室内空间陈设的脑认知与智能交互研究》的数据采集工具
+> 硕士论文《共享办公型室内空间陈设的脑认知与智能交互研究》的数据采集与分析工具
 >
-> 输入一张平面图 + 若干透视照 → 输出 56 个标准化空间特征（含真实物理单位）
+> **输入**：平面图 + 人视角透视照 + DXF → **输出**：56 个标准化空间特征（真实物理单位）+ 典型原型聚类
 
 ---
 
 ## 它能做什么
 
-给它一个共享办公空间的平面图和室内照片，它会自动提取出 56 个量化特征，涵盖空间尺度（米）、围护结构、家具配置、色彩材质（HEX/RAL）、光环境（lux/K）、空间感知评分，以及基于计算机视觉的几何形态和语义构成分析。所有结果以 JSON + CSV 输出，可直接用于统计建模。
+对共享办公空间单元做两件事：
 
-处理流程分两个阶段：
+1. **特征提取**：从「平面图 + 透视照 + DXF」自动提取 **56 个量化特征**——空间尺度（米）、围护结构、家具配置、色彩材质（HEX/RAL）、光环境（lux/K）、空间感知，以及 CV 几何形态与语义构成。输出 JSON + CSV + 可视化图。
+2. **聚类分析**：把多个空间单元按不同维度聚类，提取**典型原型**（4 个方向：空间原型/陈设配置/功能类型/视觉风格），输出原型表 + 高级可视化 + 汇报文档。
 
-- **阶段 A**（LLM 看图）：多模态大模型同时看平面图和透视照，通过"家具标定法"反推空间真实尺寸，输出 38 个特征
-- **阶段 B**（本地脚本）：OpenCV 分析平面图几何、Mask2Former 做语义分割、OpenCV 计算感知指标，输出 18 个特征 + 3 张可视化图
+处理流程分三部分：
+
+- **阶段 A（语义 + 几何）**：多模态大模型看图提供语义（色彩/材质/光/感知）；**DXF 提供权威几何**（长宽/净面积/围合度/家具，误差 ±0）
+- **阶段 B（本地 CV）**：OpenCV 平面几何 + Mask2Former 语义分割 + OpenCV 感知指标
+- **聚类分析**：K-means（+Ward 对照）按维度子集聚类 → 典型原型 + 轮廓系数 + 可视化
+
+> 当前数据集：**30 个空间单元**（北京 6 个项目：盈科中心/国航世纪/望京国际中心/慈云寺/互联网金融中心/三里屯），全部完成特征提取。
 
 ---
 
-## 目录结构与文件说明
+## 目录结构
 
 ```
 space-feature-extractor/
+├── README.md                     ← 👈 本文件，项目总览
+├── SKILL.md                      ← Skill 入口（AI 助手读它执行工作流）
+├── manifest.csv                  ← ★ 唯一管理文件：单元清单 + 已/未处理状态
 │
-├── README.md                    ← 👈 你正在看的文件，项目总览和使用说明
-├── SKILL.md                     ← CatDesk Skill 入口文件，AI 助手读这个来执行工作流
+├── input/{项目}/{单元}/           ← 纯人工素材
+│   ├── plan.png                 平面图
+│   ├── photo_01.jpg ...         人视角照片
+│   └── unit.dxf                 CAD 图纸（DXF）
 │
-├── references/                  ← 参考文档（不需要修改，供查阅）
-│   ├── PRD_空间分析管线.md      ← 完整的产品需求文档 + 技术路线图，换机器时的开发参考
-│   ├── llm_prompt_template.md   ← 阶段A的 LLM 提示词模板，包含 JSON Schema 和家具标定法说明
-│   ├── feature_dictionary.json  ← 56 个特征字段的中英文对照表（JSON 格式）
-│   └── feature_dictionary.csv   ← 同上的 CSV 版本，Excel 可直接打开查看
+├── output/{项目}/{单元}/          ← 全部生成内容（镜像 input）
+│   ├── llm_understanding.json   阶段A产物（语义 + DXF 几何）
+│   ├── features.json / _cn.json / .csv   56 特征
+│   └── plan_binary.png / seg_semantic_0N.png / seg_overlay_0N.png
+├── output/cluster/{mode}/        ← 聚类结果（prototypes.csv / cluster_assignments.csv / 可视化）
+├── output/cluster/report/        ← 聚类汇报文档 + 高级可视化图
 │
-├── scripts/                     ← 核心脚本（阶段B）
-│   ├── space_analyzer.py        ← 单案例分析脚本：读取图片+LLM JSON → 跑 CV 管线 → 输出特征+图片
-│   └── batch_analyze.py         ← 批量处理脚本：遍历 input/ 下所有案例，逐个调用 space_analyzer
-│
-├── input/                       ← 📂 输入数据（往这里放你的案例）
-│   └── 案例01_WeWork/           ← 示例案例（已填充真实数据，可作为参考模板）
-│       ├── plan.png             ← 平面图（必须，命名为 plan.*）
-│       ├── photo_01.png         ← 透视照（必须至少1张，命名为 photo_*.*）
-│       └── llm_understanding.json ← 阶段A产出（LLM 看图后生成的结构化 JSON）
-│
-└── output/                      ← 📂 输出结果（脚本自动生成，不需要手动创建）
-    ├── 案例01_WeWork/           ← 示例案例的分析产出
-    │   ├── features.json        ← ⭐ 核心产出：56 个特征值（JSON）
-    │   ├── features.csv         ← 同样数据的表格版，Excel 直接打开
-    │   ├── plan_binary.png      ← OpenCV 平面图二值化结果
-    │   ├── seg_semantic.png     ← Mask2Former 语义分割纯色图（8种颜色对应8类空间元素）
-    │   └── seg_overlay.png      ← 语义分割叠加在原图上的效果图
-    ├── batch_summary.json       ← 批量处理汇总：每个案例的状态/特征数/耗时
-    └── batch_summary.csv        ← 同上的 CSV 版本
+├── scripts/                      ← 全部脚本（见下）
+├── references/                   ← 字段总表 / 命名规范 / prompt 模板 / PRD
+└── _legacy/                      ← 旧版示例归档
 ```
+
+**命名规则**：项目夹 `{序号}-{项目中文名}`；单元夹 `{项目中文名}-{NN}`；单元内固定为 `plan.png / photo_0N.jpg / unit.dxf`。详见 `references/目录结构与命名规范.md`。
 
 ---
 
@@ -59,96 +57,119 @@ space-feature-extractor/
 ### 1. 安装依赖
 
 ```bash
-pip3 install opencv-python-headless torch torchvision transformers numpy Pillow
+pip install ezdxf numpy opencv-python-headless torch torchvision transformers Pillow
+# 聚类分析另需：
+pip install scikit-learn matplotlib pandas shapely
 ```
 
-Mask2Former 模型首次运行时会自动下载（约 200MB），之后走本地缓存。支持 Apple Silicon MPS 加速。
-
-### 2. 准备案例数据
-
-在 `input/` 下新建一个案例文件夹，放入平面图和透视照：
+**阶段 B 运行前必须设离线变量**（否则联网检查会卡十几分钟）：
 
 ```bash
-mkdir input/案例02_某空间
-cp /你的图片路径/平面图.jpg  input/案例02_某空间/plan.jpg
-cp /你的图片路径/室内照.png  input/案例02_某空间/photo_01.png
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+export M2F_MODEL_DIR=/path/to/mask2former_cache   # 本地模型缓存
 ```
 
-可以参考已有的 `input/案例01_WeWork/` 了解文件命名规范。
+> **中文路径注意**：`cv2.imread/imwrite` 对中文路径会静默失败，本项目用 `_imread_unicode()/_imwrite_unicode()` 处理；新增图像 I/O 请复用。
 
-### 3. 跑阶段 A（LLM 看图）
-
-用任何支持视觉的 LLM（Claude/GPT-4o 等），把平面图和透视照一起发给它，附上 `references/llm_prompt_template.md` 中的提示词。LLM 会输出一个结构化 JSON，保存为：
-
-```
-input/案例02_某空间/llm_understanding.json
-```
-
-如果在 CatDesk 中使用，说"帮我分析这个空间"即可自动完成这一步。
-
-### 4. 跑阶段 B（本地 CV 管线）
+### 2. 一键跑（推荐）
 
 ```bash
-# 设置路径变量（根据你的实际路径修改）
-SKILL=~/.catpaw/skills/space-feature-extractor
-
-# 批量处理 input/ 下所有案例
-python3 $SKILL/scripts/batch_analyze.py \
-  --input-dir $SKILL/input \
-  --output-dir $SKILL/output
-
-# 或者只跑单个案例
-python3 $SKILL/scripts/batch_analyze.py \
-  --input-dir $SKILL/input \
-  --output-dir $SKILL/output \
-  --case 案例02_某空间
+python scripts/run_pipeline.py --dry-run       # 概览：哪些单元已处理 / 待处理
+python scripts/run_pipeline.py --interactive   # 概览后确认再执行
+python scripts/run_pipeline.py                 # 增量补跑：缺阶段A/B的自动补上
 ```
 
-### 5. 查看结果
+管道自动：扫 `input/{项目}/{单元}` → 检查 `output/...` 产物 → 缺则补跑 → 回写 `manifest.csv` 状态。**重复运行只处理新增。**
 
-处理完成后，在 `output/案例02_某空间/` 下会看到：
+### 3. 聚类分析
 
-- `features.json` — 56 个特征值，核心产出
-- `features.csv` — 同样的数据，Excel 直接打开
-- `plan_binary.png` — 平面图二值化（验证用）
-- `seg_semantic.png` — 语义分割图
-- `seg_overlay.png` — 语义分割叠加原图
+```bash
+python scripts/cluster_spaces.py --mode shell       # 空间原型（壳子）
+python scripts/cluster_spaces.py --mode furnishing  # 陈设配置
+python scripts/cluster_spaces.py --mode function    # 功能类型
+python scripts/cluster_spaces.py --mode style       # 视觉风格
+python scripts/make_cluster_report.py               # 生成汇报文档 + 高级可视化
+```
+
+---
+
+## 聚类分析（4 个方向）
+
+| 聚类 | k | 轮廓系数 | 结构 | 典型原型（单元数）|
+|------|:--:|:--:|:--:|------|
+| **空间原型（壳子）** | 3 | **0.47** | **强** | 小型封闭(17) / 大型开放(12) / 狭长(1) |
+| 陈设配置 | 4 | 0.16 | 弱 | 高座多台面(5) / 低座小密集(16) / 高座中台面(8) / 高储物(1) |
+| 功能类型 | 4 | 0.21 | 弱 | 综合办公(16) / 高绿植(1) / 高门窗通透(10) / 高密度混合(3) |
+| 视觉风格 | 3 | 0.17 | 弱 | 暖调高饱和开放(4) / 明亮中性开放(12) / 私密明亮(14) |
+
+**关键结论**：仅**壳子维度**具有清晰聚类结构（轮廓系数 0.47），提取出 3 个典型的 VR 实验壳子原型；陈设配置/功能/风格维度轮廓系数均低（0.16–0.21），说明 30 个共享办公样本在陈设配置、功能构成、视觉风格上**高度同质**（以办公/会议类型为主）。
+
+**产物**：
+- `output/cluster/{mode}/`：`prototypes.csv`（簇心原型）、`cluster_assignments.csv`（每单元归属+异常标注）、`cluster_summary.json`（k/轮廓系数）、4 张可视化
+- `output/cluster/report/`：`聚类分析汇报.md` + 5 张高级图（PCA 椭圆总览 / 特征热力图 / 原型平行坐标 / 轮廓系数对比 / 逐样本轮廓图）
+
+> **数据质量说明**：聚类过程主动发现并修复了 2 个净面积计算 bug（个别开放空间被误算成过小面积），修复后数据更可靠。单例簇自动标注为「异常(单例)」。
 
 ---
 
 ## 56 个特征速览
 
 | 类别 | 数量 | 来源 | 举例 |
-|------|------|------|------|
-| 空间尺度 | 5 | LLM | 长 13.4m、宽 6.2m、层高 3.8m、面积 70.7m²、体积 268.7m³ |
-| 围护结构 | 5 | LLM | 窗户 2 个、窗墙比 0.38、围合度 0.65 |
-| 空间比例 | 2 | LLM | 高宽比 0.61、长宽比 2.16 |
-| 家具配置 | 3 | LLM | 座位 27 个、家具密度 0.26、座位密度 0.38/m² |
-| 色彩材质 | 15 | LLM | 色温 4200K、主色 #c8a86e (RAL 1002)、地板/墙/天花材质 |
-| 光环境与感知 | 7 | LLM | 照度 350lux、开阔感 0.78、私密性 0.2、RT60 1.3s |
-| 空间类型 | 1 | LLM | "共享办公-休闲协作区" |
-| 平面几何 | 5 | OpenCV | 紧凑度 0.49、矩形度 0.88、通透度 |
-| 语义构成 | 8 | Mask2Former | 围护壳体 46%、地面 20%、门窗 19%、座椅 9% |
-| CV 感知 | 6 | OpenCV | 亮度 165、色温 5896K、冷暖指数 20.7 |
+|------|:--:|------|------|
+| 空间尺度 | 5 | DXF/LLM | 长 9.7m、宽 4.7m、层高 2.9m、面积 45.6m² |
+| 围护结构 | 5 | LLM | 窗户数、窗墙比、门数、周长、围合度 |
+| 空间比例 | 2 | DXF | 高宽比、长宽比 |
+| 家具配置 | 3 | LLM/DXF | 座位数、家具密度、座位密度 |
+| 色彩材质 | 15 | LLM | 色温、色调方案、主色 HEX/RAL、地/墙/天花材质 |
+| 光环境与感知 | 7 | LLM | 灯具类型、照度 lux、采光系数、开阔感、私密性、RT60 |
+| 平面几何 | 5 | OpenCV | 紧凑度、矩形度、凸性、水平/垂直通透度 |
+| 语义构成 | 8 | Mask2Former | 围护壳体/地面/门窗/座椅/台面/储物/植物/照明 占比 |
+| CV 感知 | 6 | OpenCV | 亮度、对比度、色温 CV、冷暖指数、饱和度、纵深感 |
 
-完整的中英文字段对照表见 `references/feature_dictionary.csv`。
+完整字段总表（按分析维度分组，含单位/来源/所属聚类维度）见 **`references/特征字段总表.md`**。
+
+---
+
+## 版本管理（同步到 GitHub）
+
+仓库：`https://github.com/everglowwwww/Space-Feature-Extractor.git`
+
+```bash
+python scripts/git_sync.py --dry-run                 # 预览将要提交什么
+python scripts/git_sync.py -m "说明" --push           # 提交并推送（推荐）
+```
+
+- 自动 `git add -f input output`（数据在 .gitignore 中，脚本替你强制入库）
+- 安全检查：API 密钥 `config/deepseek.json` 与冗余备份 `_restore_backup/` **若被误暂存会中止**
+
+---
+
+## 脚本清单
+
+| 脚本 | 作用 |
+|------|------|
+| `run_pipeline.py` | **统一增量编排入口**（日常只用它） |
+| `llm_phase_a.py` | 阶段A-视觉：多模态模型看图 → JSON |
+| `dxf_parser.py` | 阶段A-几何：DXF 精确尺度 + 净面积（内圈孔洞多边形）+ 围合度 |
+| `space_analyzer.py` | 阶段B：OpenCV + Mask2Former → 56 特征 + 图 |
+| `cluster_spaces.py` | 聚类（shell/furnishing/function/style，mode 可插拔） |
+| `make_cluster_report.py` | 聚类汇报 + 高级可视化 |
+| `gen_manifest.py` / `apply_restructure.py` | 清单生成 / 目录标准化（幂等） |
+| `git_sync.py` | 一键提交并同步到 GitHub |
+| `plan_splitter.py` / `batch_analyze.py` / `card_generator.py` | 平面图拆分 / 批量阶段B / 案例卡片 |
 
 ---
 
 ## 换电脑部署
 
-把整个 `space-feature-extractor/` 文件夹复制到新机器的 `~/.catpaw/skills/` 下（或任意位置），然后：
-
-```bash
-pip3 install opencv-python-headless torch torchvision transformers numpy Pillow
-```
-
-就可以直接跑了。代码、文档、示例数据全在一起，不需要额外配置。
+把整个 `space-feature-extractor/` 文件夹复制到新机器（或 git clone），按上面「安装依赖」装好依赖、配好 `M2F_MODEL_DIR` 即可直接跑。代码、文档、数据全在一起。详见 `DEPLOYMENT.md`。
 
 ---
 
 ## 更多信息
 
-- 详细的技术路线和架构设计 → `references/PRD_空间分析管线.md`
-- 56 个字段的定义和基准值 → `references/feature_dictionary.json`
-- LLM 提示词和家具标定法 → `references/llm_prompt_template.md`
+- 完整字段总表（按维度分组）→ `references/特征字段总表.md`
+- 目录结构与命名规范 → `references/目录结构与命名规范.md`
+- 技术路线与架构 → `references/PRD_空间分析管线.md`
+- 研究方法论（壳子-陈设分离、聚类原型）→ `references/研究方法论.md`
+- 项目进展与决策记录 → `MEMORY.md`
