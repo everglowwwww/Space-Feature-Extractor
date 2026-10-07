@@ -33,11 +33,33 @@ def git(*args, check=True):
     return (r.stdout or "").strip()
 
 
+def detect_proxy():
+    """探测可用代理（GitHub 直连常被墙）：环境变量优先，其次 Windows 系统代理(注册表)。
+    返回 'http://host:port' 或 None。"""
+    for k in ("HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"):
+        v = os.environ.get(k)
+        if v:
+            return v if "://" in v else f"http://{v}"
+    if os.name == "nt":
+        try:
+            import winreg
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                r"Software\Microsoft\Windows\CurrentVersion\Internet Settings") as key:
+                if winreg.QueryValueEx(key, "ProxyEnable")[0]:
+                    srv = str(winreg.QueryValueEx(key, "ProxyServer")[0])
+                    return srv if "://" in srv else f"http://{srv}"
+        except Exception:
+            pass
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser(description="一键提交并同步 skill 到 GitHub")
     ap.add_argument("-m", "--message", default=None, help="提交信息（缺省自动生成）")
     ap.add_argument("--push", action="store_true", help="提交后推送到 GitHub")
     ap.add_argument("--no-data", action="store_true", help="不强制加入 input/output 数据")
+    ap.add_argument("--proxy", default=None, help="推送用代理(如 http://127.0.0.1:7890)，缺省自动探测")
+    ap.add_argument("--no-proxy", action="store_true", help="推送不走代理")
     ap.add_argument("--dry-run", action="store_true", help="只预览，不提交")
     args = ap.parse_args()
 
@@ -88,14 +110,19 @@ def main():
     git("commit", "-m", msg)
     print(f"[提交] {git('log', '-1', '--format=%h | %s')}")
 
-    # 6) 推送
+    # 6) 推送（自动走代理：GitHub 直连常被墙）
     if args.push:
-        print("[推送] git push origin", branch, "...")
-        r = subprocess.run(["git", "push", "origin", branch], cwd=ROOT,
-                           capture_output=True, text=True, encoding="utf-8", errors="replace")
+        proxy = None if args.no_proxy else (args.proxy or detect_proxy())
+        cmd = ["git"]
+        if proxy:
+            cmd += ["-c", f"http.proxy={proxy}", "-c", f"https.proxy={proxy}"]
+        cmd += ["push", "origin", branch]
+        print(f"[推送] {'经代理 ' + proxy + ' ' if proxy else '(直连) '}git push origin {branch} ...")
+        r = subprocess.run(cmd, cwd=ROOT, capture_output=True,
+                           text=True, encoding="utf-8", errors="replace")
         out = (r.stdout or "") + (r.stderr or "")
         if r.returncode != 0:
-            sys.exit(f"[推送失败]\n{out}")
+            sys.exit(f"[推送失败]（网络/代理问题？可加 --proxy http://127.0.0.1:7890）\n{out}")
         print("[推送] 完成 ->", [l for l in out.splitlines() if "->" in l or "main" in l][-1:] or out[-120:])
         ahead = git("rev-list", "--left-right", "--count", f"origin/{branch}...{branch}")
         print(f"[同步] 领先/落后 = {ahead}（0 0 表示完全同步）")
