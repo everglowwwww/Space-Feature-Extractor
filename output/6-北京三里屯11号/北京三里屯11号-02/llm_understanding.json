@@ -1,0 +1,196 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(39段)、桌子(15段)、柜子(2段)、墙体(5段)、虚线(2段)、玻璃(1段)",
+        "空间尺寸 DXF=8.70×8.20m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长24.70m/总周长33.80m=0.76。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京三里屯11号-02 共享办公空间",
+    "space_type": "共享办公-休闲协作区",
+    "space_type_en": "coworking-lounge"
+  },
+  "空间绝对尺度": {
+    "length_m": 8.7,
+    "width_m": 8.2,
+    "ceiling_height_m": 4.5,
+    "net_floor_area_m2": 62.48,
+    "volume_m3": 281.16
+  },
+  "围护结构": {
+    "num_windows": 1,
+    "window_wall_ratio": 0.35,
+    "num_doors": 1,
+    "perimeter_m": 33.8,
+    "enclosure_ratio": 0.76
+  },
+  "空间比例": {
+    "height_width_ratio": 0.55,
+    "length_width_ratio": 1.06
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "标准办公椅",
+        "layer": "椅子",
+        "count": 2,
+        "dimensions_m": "0.50×0.50",
+        "footprint_m2": 0.25,
+        "seats": 16,
+        "material": "塑料/金属"
+      },
+      {
+        "type": "桌子 0.40×0.80",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.40×0.80",
+        "footprint_m2": 0.32,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.80×2.00",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "0.80×2.00",
+        "footprint_m2": 1.6,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 30,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.95×0.95",
+        "layer": "桌子",
+        "count": 6,
+        "dimensions_m": "0.95×0.95",
+        "footprint_m2": 0.903,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.95×0.95",
+        "layer": "桌子",
+        "count": 5,
+        "dimensions_m": "0.95×0.95",
+        "footprint_m2": 0.903,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.05×0.80",
+        "layer": "柜子",
+        "count": 2,
+        "dimensions_m": "0.05×0.80",
+        "footprint_m2": 0.04,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.50×0.80",
+        "layer": "椅子",
+        "count": 9,
+        "dimensions_m": "0.50×0.80",
+        "footprint_m2": 0.4,
+        "seats": 1,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 20.83,
+    "total_seats": 55,
+    "furniture_density": 0.33,
+    "seating_density_per_m2": 0.88
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone 11-0601 TCX",
+        "ral_approx": "RAL 9010",
+        "area_pct": 40,
+        "location": "墙面、天花"
+      },
+      {
+        "rank": 2,
+        "color_name": "原木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 14-1116 TCX",
+        "ral_approx": "RAL 1001",
+        "area_pct": 25,
+        "location": "地板、桌面"
+      },
+      {
+        "rank": 3,
+        "color_name": "深蓝色",
+        "hex": "#1C3F60",
+        "pantone_approx": "Pantone 19-4027 TCX",
+        "ral_approx": "RAL 5003",
+        "area_pct": 15,
+        "location": "卡座沙发、背景墙"
+      },
+      {
+        "rank": 4,
+        "color_name": "灰色",
+        "hex": "#808080",
+        "pantone_approx": "Pantone 17-0000 TCX",
+        "ral_approx": "RAL 7035",
+        "area_pct": 10,
+        "location": "座椅、金属构件"
+      },
+      {
+        "rank": 5,
+        "color_name": "黄色",
+        "hex": "#FFD700",
+        "pantone_approx": "Pantone 13-0758 TCX",
+        "ral_approx": "RAL 1018",
+        "area_pct": 5,
+        "location": "墙面文字、地毯点缀"
+      },
+      {
+        "rank": 6,
+        "color_name": "黑色",
+        "hex": "#000000",
+        "pantone_approx": "Pantone 19-4005 TCX",
+        "ral_approx": "RAL 9005",
+        "area_pct": 5,
+        "location": "椅腿、灯具线缆"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "现代北欧风，以白色和原木色为主，深蓝色作为视觉焦点，黄色文字点缀，营造明亮、活力的办公氛围。",
+    "primary_floor_material": "浅色木地板",
+    "primary_wall_material": "白色涂料墙面",
+    "primary_ceiling_material": "白色金属网格吊顶（透光）"
+  },
+  "光环境": {
+    "lighting_type": "球形吊灯（暖白光）",
+    "num_visible_lights": 20,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.04
+  },
+  "空间感知指标": {
+    "openness_score": 0.7,
+    "privacy_score": 0.3,
+    "estimated_RT60_s": 0.8
+  }
+}

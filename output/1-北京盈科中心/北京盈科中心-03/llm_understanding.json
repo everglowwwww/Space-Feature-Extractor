@@ -1,0 +1,142 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(7段)、桌子(1段)、虚线(1段)、墙体(4段)",
+        "空间尺寸 DXF=4.90×3.60m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长15.10m/总周长17.00m=0.93。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京盈科中心-03 共享办公协作区",
+    "space_type": "共享办公-休闲协作区",
+    "space_type_en": "coworking-lounge"
+  },
+  "空间绝对尺度": {
+    "length_m": 4.9,
+    "width_m": 3.6,
+    "ceiling_height_m": 2.8,
+    "net_floor_area_m2": 14.3,
+    "volume_m3": 40.04
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 1,
+    "perimeter_m": 17.0,
+    "enclosure_ratio": 0.93
+  },
+  "空间比例": {
+    "height_width_ratio": 0.78,
+    "length_width_ratio": 1.36
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "高脚凳",
+        "layer": "椅子",
+        "count": 7,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 6,
+        "material": "木质腿/红色软垫"
+      },
+      {
+        "type": "桌子 1.00×2.00",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.00×2.00",
+        "footprint_m2": 2.0,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 3.12,
+    "total_seats": 6,
+    "furniture_density": 0.22,
+    "seating_density_per_m2": 0.42
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "橄榄绿",
+        "hex": "#7A8B5C",
+        "pantone_approx": "Pantone 5753 C",
+        "ral_approx": "RAL 6021",
+        "area_pct": 35,
+        "location": "墙面"
+      },
+      {
+        "rank": 2,
+        "color_name": "浅木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 4665 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 20,
+        "location": "桌面"
+      },
+      {
+        "rank": 3,
+        "color_name": "暖橙色",
+        "hex": "#E07A5F",
+        "pantone_approx": "Pantone 7417 C",
+        "ral_approx": "RAL 3012",
+        "area_pct": 10,
+        "location": "座椅软垫"
+      },
+      {
+        "rank": 4,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone 663 C",
+        "ral_approx": "RAL 9016",
+        "area_pct": 25,
+        "location": "天花及部分墙面"
+      },
+      {
+        "rank": 5,
+        "color_name": "深灰色",
+        "hex": "#333333",
+        "pantone_approx": "Pantone 447 C",
+        "ral_approx": "RAL 7016",
+        "area_pct": 5,
+        "location": "门框及桌腿"
+      },
+      {
+        "rank": 6,
+        "color_name": "浅灰色",
+        "hex": "#D3D3D3",
+        "pantone_approx": "Pantone 428 C",
+        "ral_approx": "RAL 7035",
+        "area_pct": 5,
+        "location": "地面地毯"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "自然活力色调（绿色墙面与木色家具搭配暖橙点缀）",
+    "primary_floor_material": "浅灰色地毯",
+    "primary_wall_material": "涂料（橄榄绿）及玻璃隔断",
+    "primary_ceiling_material": "白色石膏板"
+  },
+  "光环境": {
+    "lighting_type": "线性LED吊灯及嵌入式筒灯",
+    "num_visible_lights": 3,
+    "estimated_illuminance_lux": 400,
+    "daylight_factor_est": -1
+  },
+  "空间感知指标": {
+    "openness_score": 0.6,
+    "privacy_score": 0.6,
+    "estimated_RT60_s": 0.7
+  }
+}

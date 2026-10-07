@@ -38,6 +38,27 @@ import cv2
 import numpy as np
 
 # =============================================
+#  中文路径安全的图片读取（OpenCV 在 Windows 上无法处理含中文的路径，
+#  先读字节再 imdecode 解码）
+# =============================================
+def _imread_unicode(path, flags=cv2.IMREAD_COLOR):
+    with open(path, "rb") as f:
+        data = np.frombuffer(f.read(), dtype=np.uint8)
+    img = cv2.imdecode(data, flags)
+    return img
+
+
+def _imwrite_unicode(path, img):
+    """cv2.imwrite 在含中文的路径下会静默失败（返回 False），
+    改用 imencode + 手动写字节，兼容 Unicode/中文路径。"""
+    ext = os.path.splitext(str(path))[1] or ".png"
+    ok, buf = cv2.imencode(ext, img)
+    if ok:
+        with open(str(path), "wb") as f:
+            f.write(buf.tobytes())
+    return ok
+
+# =============================================
 #  语义分组 (Mask2Former ADE20K 150→8组)
 # =============================================
 SEMANTIC_GROUPS = {
@@ -153,12 +174,26 @@ def _load_m2f():
     if _M2F_MODEL is not None:
         return
     import torch
+    import os
     from transformers import AutoImageProcessor, Mask2FormerForUniversalSegmentation
     MID = "facebook/mask2former-swin-tiny-ade-semantic"
-    _M2F_DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
-    print("    Loading Mask2Former ({})...".format(_M2F_DEVICE), end="", flush=True)
-    _M2F_PROCESSOR = AutoImageProcessor.from_pretrained(MID)
-    _M2F_MODEL = Mask2FormerForUniversalSegmentation.from_pretrained(MID)
+    # 设备优先级：CUDA > MPS > CPU
+    if torch.cuda.is_available():
+        _M2F_DEVICE = "cuda"
+    elif torch.backends.mps.is_available():
+        _M2F_DEVICE = "mps"
+    else:
+        _M2F_DEVICE = "cpu"
+    # 模型来源：优先本地缓存目录（免联网），否则回退到模型ID（会联网下载）
+    model_path = os.environ.get("M2F_MODEL_DIR", MID)
+    if os.path.isdir(model_path):
+        local_ref = model_path
+        print("    Loading Mask2Former (local: {}) on {}...".format(model_path, _M2F_DEVICE), end="", flush=True)
+    else:
+        local_ref = MID
+        print("    Loading Mask2Former ({}) on {}...".format(_M2F_DEVICE, _M2F_DEVICE), end="", flush=True)
+    _M2F_PROCESSOR = AutoImageProcessor.from_pretrained(local_ref)
+    _M2F_MODEL = Mask2FormerForUniversalSegmentation.from_pretrained(local_ref)
     _M2F_MODEL = _M2F_MODEL.to(_M2F_DEVICE).eval()
     print(" done")
 
@@ -256,7 +291,7 @@ def load_llm_understanding(json_path):
 #  OpenCV 平面图分析
 # =============================================
 def analyze_plan_cv(img_path, output_dir=None):
-    gray = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    gray = _imread_unicode(img_path, cv2.IMREAD_GRAYSCALE)
     if gray is None:
         return {}
     h, w = gray.shape
@@ -307,7 +342,7 @@ def analyze_plan_cv(img_path, output_dir=None):
         # 输出时统一为白底黑线（人类友好），即线条=0、背景=255
         display_binary = cv2.bitwise_not(binary)
         bin_rgb = cv2.cvtColor(display_binary, cv2.COLOR_GRAY2RGB)
-        cv2.imwrite(os.path.join(output_dir, "plan_binary.png"), bin_rgb)
+        _imwrite_unicode(os.path.join(output_dir, "plan_binary.png"), bin_rgb)
 
     return f
 
@@ -380,14 +415,25 @@ def analyze_semantics(photo_paths, output_dir=None):
             legend_padding = 12
             legend_h = legend_padding * 2 + len(legend_items) * line_height
 
-            # 尝试加载中文字体
+            # 尝试加载中文字体（兼容 Windows / macOS / Linux 多系统）
             font = None
             for fp in [
+                # Windows 中文字体
+                "C:/Windows/Fonts/msyh.ttc",
+                "C:/Windows/Fonts/msyhbd.ttc",
+                "C:/Windows/Fonts/simhei.ttf",
+                "C:/Windows/Fonts/simsun.ttc",
+                "C:/Windows/Fonts/simkai.ttf",
+                # macOS 中文字体
                 "/System/Library/Fonts/STHeiti Medium.ttc",
                 "/System/Library/Fonts/PingFang.ttc",
                 "/System/Library/Fonts/Hiragino Sans GB.ttc",
                 "/System/Library/Fonts/Supplemental/Songti.ttc",
                 "/System/Library/Fonts/STHeiti Light.ttc",
+                # Linux 中文字体
+                "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf",
+                "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+                "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
             ]:
                 if os.path.exists(fp):
                     try:
@@ -447,8 +493,8 @@ def analyze_semantics(photo_paths, output_dir=None):
 
             # 编号：单张时不带后缀保持兼容，多张时带 _01 _02 ...
             suffix = "_{:02d}".format(idx + 1) if len(all_segs) > 1 else ""
-            cv2.imwrite(os.path.join(output_dir, "seg_semantic{}.png".format(suffix)),
-                        cv2.cvtColor(seg_color, cv2.COLOR_RGB2BGR))
+            _imwrite_unicode(os.path.join(output_dir, "seg_semantic{}.png".format(suffix)),
+                             cv2.cvtColor(seg_color, cv2.COLOR_RGB2BGR))
             overlay_out.save(os.path.join(output_dir, "seg_overlay{}.png".format(suffix)))
         print("    {} photo(s) segmented".format(len(all_segs)))
 
@@ -473,7 +519,7 @@ def _nearest_ral(r, g, b):
     return best, RAL_COLORS[best][1]
 
 def analyze_photo_perception(img_path):
-    img = cv2.imread(img_path)
+    img = _imread_unicode(img_path)
     if img is None:
         return {}
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

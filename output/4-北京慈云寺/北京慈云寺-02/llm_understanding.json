@@ -1,0 +1,151 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：桌子(2段)、椅子(12段)、柜子(1段)、玻璃(2段)、虚线(1段)、墙体(5段)",
+        "空间尺寸 DXF=6.60×3.20m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长17.90m/总周长19.60m=0.95。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京慈云寺-02 会议室",
+    "space_type": "共享办公-会议室",
+    "space_type_en": "meeting-room"
+  },
+  "空间绝对尺度": {
+    "length_m": 6.6,
+    "width_m": 3.2,
+    "ceiling_height_m": 2.8,
+    "net_floor_area_m2": 17.27,
+    "volume_m3": 48.36
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 1,
+    "perimeter_m": 19.6,
+    "enclosure_ratio": 0.95
+  },
+  "空间比例": {
+    "height_width_ratio": 0.87,
+    "length_width_ratio": 2.06
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "桌子 0.85×1.90",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "0.85×1.90",
+        "footprint_m2": 1.615,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 12,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.40×2.24",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.40×2.24",
+        "footprint_m2": 0.896,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 6.05,
+    "total_seats": 12,
+    "furniture_density": 0.35,
+    "seating_density_per_m2": 0.69
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "浅木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 4665 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 35,
+        "location": "桌面、墙面装饰板"
+      },
+      {
+        "rank": 2,
+        "color_name": "灰白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone Cool Gray 1 C",
+        "ral_approx": "RAL 9003",
+        "area_pct": 25,
+        "location": "白板、天花板"
+      },
+      {
+        "rank": 3,
+        "color_name": "深灰/黑色",
+        "hex": "#333333",
+        "pantone_approx": "Pantone Black 6 C",
+        "ral_approx": "RAL 9005",
+        "area_pct": 15,
+        "location": "玻璃边框、椅子腿、电视屏幕"
+      },
+      {
+        "rank": 4,
+        "color_name": "植物图案灰绿",
+        "hex": "#A9A9A9",
+        "pantone_approx": "Pantone 429 C",
+        "ral_approx": "RAL 7035",
+        "area_pct": 15,
+        "location": "墙面壁纸"
+      },
+      {
+        "rank": 5,
+        "color_name": "浅绿色",
+        "hex": "#D0E8D0",
+        "pantone_approx": "Pantone 344 C",
+        "ral_approx": "RAL 6019",
+        "area_pct": 5,
+        "location": "地面"
+      },
+      {
+        "rank": 6,
+        "color_name": "藤编原色",
+        "hex": "#DEB887",
+        "pantone_approx": "Pantone 466 C",
+        "ral_approx": "RAL 1002",
+        "area_pct": 5,
+        "location": "吊灯灯罩"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "自然原木与植物图案的混合风格",
+    "primary_floor_material": "浅绿色地毯",
+    "primary_wall_material": "植物图案壁纸与白板",
+    "primary_ceiling_material": "白色石膏板"
+  },
+  "光环境": {
+    "lighting_type": "藤编吊灯与线性灯带",
+    "num_visible_lights": 4,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.02
+  },
+  "空间感知指标": {
+    "openness_score": 0.5,
+    "privacy_score": 0.8,
+    "estimated_RT60_s": 0.8
+  }
+}

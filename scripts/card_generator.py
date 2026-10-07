@@ -31,15 +31,30 @@ def S(v):
 _FONT_CACHE = {}
 
 def _find_fonts():
-    """返回 (regular_path, bold_path)"""
+    """返回 (regular_path, bold_path)，兼容 Windows / macOS / Linux"""
     regular_candidates = [
+        # Windows
+        "C:/Windows/Fonts/msyh.ttc",
+        "C:/Windows/Fonts/simhei.ttf",
+        "C:/Windows/Fonts/simsun.ttc",
+        "C:/Windows/Fonts/simkai.ttf",
+        # macOS
         "/System/Library/Fonts/STHeiti Light.ttc",
         "/Library/Fonts/Arial Unicode.ttf",
         "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
+        # Linux
+        "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
     ]
     bold_candidates = [
+        # Windows
+        "C:/Windows/Fonts/msyhbd.ttc",
+        "C:/Windows/Fonts/msyh.ttc",
+        "C:/Windows/Fonts/simhei.ttf",
+        # macOS
         "/System/Library/Fonts/STHeiti Medium.ttc",
         "/Library/Fonts/Arial Unicode.ttf",
+        # Linux
+        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
     ]
     reg = None
     for p in regular_candidates:

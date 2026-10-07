@@ -1,0 +1,286 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：墙体(15段)、椅子(40段)、桌子(22段)、玻璃(2段)、虚线(2段)",
+        "空间尺寸 DXF=20.30×11.10m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长50.89m/总周长62.79m=0.85。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京国航世纪-03",
+    "space_type": "共享办公-休闲协作区",
+    "space_type_en": "coworking-lounge"
+  },
+  "空间绝对尺度": {
+    "length_m": 20.3,
+    "width_m": 11.1,
+    "ceiling_height_m": 3.5,
+    "net_floor_area_m2": 182.96,
+    "volume_m3": 640.36
+  },
+  "围护结构": {
+    "num_windows": 8,
+    "window_wall_ratio": 0.45,
+    "num_doors": 2,
+    "perimeter_m": 62.79,
+    "enclosure_ratio": 0.85
+  },
+  "空间比例": {
+    "height_width_ratio": 0.32,
+    "length_width_ratio": 1.83
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "吧台椅",
+        "layer": "椅子",
+        "count": 33,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 4,
+        "material": "金属"
+      },
+      {
+        "type": "桌子 0.30×0.90",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "0.30×0.90",
+        "footprint_m2": 0.27,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "单人休闲椅",
+        "layer": "椅子",
+        "count": 4,
+        "dimensions_m": "0.64×0.64",
+        "footprint_m2": 0.41,
+        "seats": 4,
+        "material": "织物+金属框架"
+      },
+      {
+        "type": "桌子 0.90×1.00",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "0.90×1.00",
+        "footprint_m2": 0.9,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.80×2.00",
+        "layer": "椅子",
+        "count": 2,
+        "dimensions_m": "0.80×2.00",
+        "footprint_m2": 1.6,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.50×3.00",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.50×3.00",
+        "footprint_m2": 1.5,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.95×0.95",
+        "layer": "桌子",
+        "count": 3,
+        "dimensions_m": "0.95×0.95",
+        "footprint_m2": 0.903,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.95×0.95",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "0.95×0.95",
+        "footprint_m2": 0.902,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.95×0.95",
+        "layer": "桌子",
+        "count": 3,
+        "dimensions_m": "0.95×0.95",
+        "footprint_m2": 0.902,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.11×2.80",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.11×2.80",
+        "footprint_m2": 0.313,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.08×1.88",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.08×1.88",
+        "footprint_m2": 0.141,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.27×1.94",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.27×1.94",
+        "footprint_m2": 0.515,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.39×2.81",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.39×2.81",
+        "footprint_m2": 1.087,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.30×1.50",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "1.30×1.50",
+        "footprint_m2": 1.95,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.80×1.30",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.80×1.30",
+        "footprint_m2": 1.04,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.80×2.60",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.80×2.60",
+        "footprint_m2": 2.08,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.80×0.90",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.80×0.90",
+        "footprint_m2": 0.72,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.80×3.10",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "0.80×3.10",
+        "footprint_m2": 2.48,
+        "seats": 1,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 33.45,
+    "total_seats": 40,
+    "furniture_density": 0.18,
+    "seating_density_per_m2": 0.22
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "浅木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 466 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 40,
+        "location": "地面、桌面"
+      },
+      {
+        "rank": 2,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone Cool Gray 1 C",
+        "ral_approx": "RAL 9010",
+        "area_pct": 30,
+        "location": "墙面、天花、柱体"
+      },
+      {
+        "rank": 3,
+        "color_name": "深蓝色",
+        "hex": "#1E3A5F",
+        "pantone_approx": "Pantone 296 C",
+        "ral_approx": "RAL 5003",
+        "area_pct": 10,
+        "location": "沙发、休闲椅"
+      },
+      {
+        "rank": 4,
+        "color_name": "黑色",
+        "hex": "#2B2B2B",
+        "pantone_approx": "Pantone Black 6 C",
+        "ral_approx": "RAL 9005",
+        "area_pct": 10,
+        "location": "办公椅、金属构件"
+      },
+      {
+        "rank": 5,
+        "color_name": "暖橙色",
+        "hex": "#E07A5F",
+        "pantone_approx": "Pantone 7417 C",
+        "ral_approx": "RAL 3012",
+        "area_pct": 5,
+        "location": "地毯图案、装饰"
+      },
+      {
+        "rank": 6,
+        "color_name": "绿色",
+        "hex": "#6B8E23",
+        "pantone_approx": "Pantone 575 C",
+        "ral_approx": "RAL 6021",
+        "area_pct": 5,
+        "location": "绿植"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "北欧原木+工业风混搭",
+    "primary_floor_material": "浅色木地板",
+    "primary_wall_material": "白色涂料墙面",
+    "primary_ceiling_material": "裸露混凝土+白色喷涂"
+  },
+  "光环境": {
+    "lighting_type": "吊灯+轨道射灯+筒灯",
+    "num_visible_lights": 30,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.04
+  },
+  "空间感知指标": {
+    "openness_score": 0.7,
+    "privacy_score": 0.2,
+    "estimated_RT60_s": 0.8
+  }
+}

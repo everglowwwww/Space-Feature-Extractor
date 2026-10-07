@@ -1,0 +1,142 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：玻璃(2段)、墙体(10段)、椅子(8段)、桌子(1段)、虚线(1段)",
+        "空间尺寸 DXF=5.26×4.21m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长16.08m/总周长18.93m=0.95。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京国航世纪-01",
+    "space_type": "共享办公-会议室",
+    "space_type_en": "meeting-room"
+  },
+  "空间绝对尺度": {
+    "length_m": 5.26,
+    "width_m": 4.21,
+    "ceiling_height_m": 2.8,
+    "net_floor_area_m2": 12.72,
+    "volume_m3": 35.62
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 1,
+    "perimeter_m": 18.93,
+    "enclosure_ratio": 0.95
+  },
+  "空间比例": {
+    "height_width_ratio": 0.67,
+    "length_width_ratio": 1.25
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 8,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.10×1.70",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.10×1.70",
+        "footprint_m2": 1.87,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 3.15,
+    "total_seats": 8,
+    "furniture_density": 0.25,
+    "seating_density_per_m2": 0.63
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "深蓝灰",
+        "hex": "#2A3B4C",
+        "pantone_approx": "Pantone 7546 C",
+        "ral_approx": "RAL 5008",
+        "area_pct": 35,
+        "location": "墙面"
+      },
+      {
+        "rank": 2,
+        "color_name": "浅木色",
+        "hex": "#D9B382",
+        "pantone_approx": "Pantone 466 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 25,
+        "location": "桌面"
+      },
+      {
+        "rank": 3,
+        "color_name": "米白色",
+        "hex": "#F2EFE9",
+        "pantone_approx": "Pantone 7527 C",
+        "ral_approx": "RAL 9010",
+        "area_pct": 20,
+        "location": "天花板与白板"
+      },
+      {
+        "rank": 4,
+        "color_name": "浅灰色",
+        "hex": "#C4C4C4",
+        "pantone_approx": "Pantone 428 C",
+        "ral_approx": "RAL 7035",
+        "area_pct": 10,
+        "location": "座椅"
+      },
+      {
+        "rank": 5,
+        "color_name": "亮黄色",
+        "hex": "#F4D03F",
+        "pantone_approx": "Pantone 116 C",
+        "ral_approx": "RAL 1018",
+        "area_pct": 5,
+        "location": "装饰画"
+      },
+      {
+        "rank": 6,
+        "color_name": "鲜蓝色",
+        "hex": "#3498DB",
+        "pantone_approx": "Pantone 2925 C",
+        "ral_approx": "RAL 5015",
+        "area_pct": 5,
+        "location": "装饰画"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "现代商务冷色调，辅以暖色木纹与艺术画作点缀",
+    "primary_floor_material": "浅色木地板",
+    "primary_wall_material": "深色织物硬包板",
+    "primary_ceiling_material": "矿棉吸音板"
+  },
+  "光环境": {
+    "lighting_type": "球形吊灯与线性灯带",
+    "num_visible_lights": 4,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": -1
+  },
+  "空间感知指标": {
+    "openness_score": 0.5,
+    "privacy_score": 0.8,
+    "estimated_RT60_s": 0.7
+  }
+}

@@ -9,163 +9,165 @@ description: >
   也适用于用户给出平面图/透视照并说"帮我分析这个空间"、"提取这个空间的数据"的场景。
 ---
 
-# 共享办公空间特征提取管线
+# 共享办公空间特征提取管线（Space-Feature-Extractor）
 
-## 概述
+## 一、定位
 
-本 skill 用于从共享办公空间的平面图和透视照中提取 56 个标准化特征维度，包含真实物理单位（米、平方米、K、lux、RAL 色号等）。整个流程分两个阶段自动执行。
+从共享办公空间的**平面图 + 人视角照片 + DXF** 提取 **56 个标准化特征**（含真实物理单位：米/㎡/K/lux/RAL 色号），并生成可视化图片。流程分两阶段：
 
-## 前置条件
+- **阶段 A（语义 + 几何）**：LLM 看图提供语义（色彩/材质/光/感知）；DXF 提供权威几何（长宽/净面积/围合度/家具）。
+- **阶段 B（像素级 CV）**：OpenCV + Mask2Former 补充平面几何、语义面积占比、画面感知指标。
 
-运行阶段 B 需要以下 Python 依赖（仅首次需安装）：
+> 本技能是一个**可复现、增量、幂等**的标准化流程。日常以 `run_pipeline.py` 为单一入口。
 
-```bash
-pip3 install opencv-python-headless torch torchvision transformers numpy Pillow ezdxf
-```
+## 二、目录结构（所有路径相对 `$SKILL_DIR` 解析）
 
-Mask2Former 模型首次运行会自动下载（约200MB），后续使用缓存。支持 Apple Silicon MPS 加速。
-
-**重要**：运行阶段 B 时请添加环境变量 `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1`，避免 HuggingFace 联网检查导致超时等待（可将运行时间从 ~17 分钟缩短至 ~4 分钟）。
-
-## 工作流程
-
-### Step 0: 确认输入素材
-
-当用户触发本 skill 时，**首先向用户确认并引导准备以下输入素材**：
-
-> 为了完成空间特征提取，我需要你提供以下素材：
->
-> **必须提供（缺一不可）：**
-> 1. **平面图 PNG/JPG** — 标准化的俯视平面图（白底黑线，包含家具布局）
-> 2. **人视角照片** — 至少 1 张室内透视照片（建议 2 张不同角度，覆盖更多空间信息）
->
-> **强烈推荐（显著提升精度）：**
-> 3. **DXF 文件** — 从 CAD 软件导出的 DXF 格式图纸（提供精确尺寸，误差±0；若无 DXF 则退回"家具标定法"估算，精度约±10-20%）
->
-> **其他信息：**
-> 4. **案例名称** — 如"北京 盈科中心-5"
->
-> ⚠️ 注意：仅支持 DXF 格式的 CAD 文件，不支持 DWG（二进制私有格式）。如果你只有 DWG 文件，请在 CAD 软件中"另存为 → DXF"格式导出。
-
-等用户提供素材后再继续后续步骤。如果用户只提供了部分素材，明确告知哪些是缺少的以及影响。
-
-### Step 1: 组织目录结构
-
-所有数据统一存放在 skill 目录下的 `input/` 和 `output/` 中，便于整体迁移：
+`$SKILL_DIR` = 本 skill 所在目录（含以下子内容），不写死机器绝对路径。
 
 ```
-~/.catpaw/skills/space-feature-extractor/
-├── input/                          ← 所有案例的输入素材
-│   └── {案例名称}/
-│       ├── plan.png                ← 平面图（必须）
-│       ├── photo_01.jpg            ← 人视角照片 1（必须）
-│       ├── photo_02.jpg            ← 人视角照片 2（推荐）
-│       ├── xxx.dxf                 ← DXF 图纸（推荐，精确尺度来源）
-│       └── llm_understanding.json  ← 阶段A产出（Step 2 生成）
-├── output/                         ← 所有案例的分析产出（自动创建）
-│   └── {案例名称}/
-├── scripts/
-├── references/
+$SKILL_DIR/
+├── input/{项目}/{单元}/        ← 纯人工素材
+│   ├── plan.png              平面图
+│   ├── photo_01.jpg ...      人视角照片（按序）
+│   └── unit.dxf              CAD 图纸（DXF）
+├── output/{项目}/{单元}/       ← 全部生成内容（镜像 input）
+│   ├── llm_understanding.json  阶段A产物
+│   ├── features.json / features_cn.json / features.csv
+│   └── plan_binary.png / seg_semantic_0N.png / seg_overlay_0N.png
+├── scripts/                    ← 全部脚本（见下）
+├── references/                 ← 特征字典 / 命名规范 / prompt 模板
+├── manifest.csv                ← ★ 唯一管理文件：单元清单 + 已/未处理状态（自动更新）
 └── SKILL.md
 ```
 
-如果用户给的图片不在标准目录下，帮他们复制/移动到 `input/{案例名称}/` 下并按规范重命名。
+> 说明：`input_rename_map.csv`（input 侧改名映射）是**派生工具产物**，重命名完成后归档到 `_legacy/`；以后新增单元时由 `gen_manifest.py` 自动重新生成，不作为管理文件。
 
-可参考已有的示例案例 `input/案例01_WeWork/` 了解文件命名规范。
+**命名规则**：项目夹 `{序号}-{项目中文名}`（如 `1-北京盈科中心`）；单元夹 `{项目中文名}-{NN}`（如 `北京盈科中心-01`）；全路径**无空格**。详见 `references/目录结构与命名规范.md`。
 
-### Step 2: 阶段 A — LLM 多模态空间理解
+## 三、脚本清单
 
-**这一步由你（LLM）自己完成。** 读取 `references/llm_prompt_template.md` 获取完整的 prompt 模板和 JSON Schema。
+| 脚本 | 作用 | 依赖 |
+|------|------|------|
+| `scripts/run_pipeline.py` | **统一增量编排入口**（推荐，日常只用它） | 调下面三个 |
+| `scripts/llm_phase_a.py` | 阶段A-视觉：DeepSeek 看图 → JSON | 仅标准库 |
+| `scripts/dxf_parser.py` | 阶段A-几何：DXF 精确尺度 + 净面积 + 围合度 | ezdxf（+numpy/cv2 可选） |
+| `scripts/space_analyzer.py` | 阶段B：OpenCV + Mask2Former → 56 特征 + 图 | cv2/torch/transformers |
+| `scripts/gen_manifest.py` | 扫 input → 更新 manifest.csv + input_rename_map.csv | 标准库 |
+| `scripts/apply_restructure.py` | 改名/标准化/建占位/建 output 骨架/归档（幂等） | 标准库 |
+| `scripts/cluster_spaces.py` | **壳子聚类 → 典型原型**（M7，可复用、mode 可插拔） | sklearn + matplotlib |
+| `scripts/batch_analyze.py` | 一次性全量跑阶段B（旧方式，次要） | 同 space_analyzer |
 
-核心流程：
-1. 读取平面图和透视照（用视觉能力看图）
-2. **如果有 DXF 文件**：用 `ezdxf` 库解析 DXF，提取精确几何尺寸（空间长宽、家具尺寸、围合度等），作为尺度数据的权威来源；LLM 视觉分析仅负责语义数据（色彩、材质、光环境、感知评分）
-3. **如果没有 DXF 文件**：使用**家具标定法** — 识别图中标准尺寸家具（如单人椅约0.45m），测量像素，反推 px-to-meter 比例，再推算空间真实尺寸（精度约±10-20%）
-4. 按 prompt 模板中的 JSON Schema 结构化输出空间数据
-5. 将输出保存为 `input/{案例名称}/llm_understanding.json`（与原始图片放在一起，供阶段 B 读取）
+## 三-b、聚类与原型提取（M7）
 
-DXF 解析要点：
-- 使用 `ezdxf` 库读取，注意检查 `$INSUNITS` 确定单位（6=米）
-- 关注图层名称（如"墙体""桌子""椅子""柜子""虚线"等）来分类几何体
-- 围合度 = 墙体层总长 / 空间总周长
-- 在 `llm_understanding.json` 的 `_meta.source` 中标明数据来源（DXF 精确解析 vs 家具标定法）
-
-产出 38 个 LLM 来源特征（空间尺度、围护、比例、家具、色彩材质、光环境、感知评分）。
-
-### Step 3: 阶段 B — 本地 CV 管线
-
-调用 `scripts/space_analyzer.py` 自动完成：
+把 30 个空间单元按不同特征子集聚类，提取典型原型。脚本 `cluster_spaces.py` 可复用、mode 可插拔，方法一致（标准化/One-Hot → K-means + Ward → 轮廓系数定 k → 簇心 + 归属 + 可视化 + CSV）。
 
 ```bash
-SKILL="~/.catpaw/skills/space-feature-extractor"
-
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-python3 $SKILL/scripts/space_analyzer.py \
-  --plan "$SKILL/input/{案例名称}/plan.png" \
-  --photos "$SKILL/input/{案例名称}/photo_01.jpg" "$SKILL/input/{案例名称}/photo_02.jpg" \
-  --llm-json "$SKILL/input/{案例名称}/llm_understanding.json" \
-  --name "{案例名称}" \
-  --out "$SKILL/output/{案例名称}"
+python scripts/cluster_spaces.py --mode shell      # 空间原型（壳子，默认 k=3）
+python scripts/cluster_spaces.py --mode furnishing # 陈设配置（密度/复杂度，自动 k）
+python scripts/cluster_spaces.py --mode function   # 功能类型（语义占比，自动 k）
+python scripts/cluster_spaces.py --mode style      # 视觉风格（含文本 One-Hot，自动 k）
+python scripts/cluster_spaces.py --mode <m> --k 4  # 指定 k
+python scripts/cluster_spaces.py --mode <m> --out output/cluster
 ```
 
-加 `--report` 可额外生成 HTML 报告。
+- **输入子集**：`shell`=壳子5字段；`furnishing`=家具密度/座位密度/座位数+语义构成(座/台/储/植/照)+主色占比；`function`=语义功能占比+家具密度；`style`=色彩/材质/光/感知(数值+文本One-Hot)。
+- **方法**：K-means（+ Ward 层次对照）；`--k` 优先，否则模式默认 k，否则轮廓系数选优（30 样本 k 上限 5）。
+- **输出**（`output/cluster/{mode}/`）：`prototypes.csv`（簇心）、`cluster_assignments.csv`（归属+备注=单例异常）、`pca_scatter.png`、`centroid_radar.png`、`silhouette_vs_k.png`、`dendrogram.png`。
+- **四类聚类结果**（均为过程性文件，供汇报/建模）：
+  | 聚类 | k | 轮廓系数 | 结构 | 结果 |
+  |------|:--:|:--:|:--:|------|
+  | shell 空间原型 | 3 | **0.47** | 强 | 小型封闭(17)/大型开放(12)/狭长(1异常=盈科中心-08) |
+  | furnishing 陈设配置 | 4 | 0.16 | 弱 | （修复数据前曾被 15.47 假值拉到 0.50，实为弱结构）|
+  | function 功能类型 | 4 | 0.21 | 弱 | 办公主导，趋同 |
+  | style 视觉风格 | 3 | 0.17 | 弱 | 趋同 |
+- **关键结论**：仅**壳子维度**结构强（0.47）；**陈设配置/功能/风格**都弱（0.16-0.21）——30 个共享办公样本在这些维度上**高度同质**（都是办公/会议导向，陈设/风格相近）。这是样本集的真实特征（可作"样本同质"发现，或提示实验需人为制造陈设多样性）。
+- **数据口径**：净面积=内圈孔洞多边形（排除凹口/墙厚），围合度=墙/(墙+虚线) 恒 0-1；异常单元（净面积<家具占地）自动退回到外包矩形并标记 `bbox`。
+- **异常标注**：单例簇自动标 `异常(单例)`（如盈科中心-08、望京03 等）。
+- **复用扩展**：在脚本 `MODES` 加新 mode 即可复用同一套聚类/可视化逻辑。
 
-该脚本会：
-- OpenCV 分析平面图 → 5 个几何形状指标 + `plan_binary.png`
-- Mask2Former 分析透视照 → 8 个语义面积占比 + 分割可视化（带图例标注的叠加图）
-- OpenCV 分析透视照 → 6 个感知指标
-- 合并所有特征 → `features.json` + `features_cn.json` + `features.csv`
+## 四、环境与路径（通用 + 本机）
 
-### Step 4: 确认产出
+### 通用（任何机器都要）
+- Python 3.10~3.12；依赖：`ezdxf numpy opencv-python-headless torch torchvision transformers Pillow`（+可选 `shapely`）。
+- **阶段 B 必须设**离线变量，否则 HuggingFace 联网检查会卡十几分钟：
+  ```
+  HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+  ```
+- **Mask2Former 模型路径**：用 `M2F_MODEL_DIR` 指向本地缓存（`facebook/mask2former-swin-tiny-ade-semantic`），避免联网下载。
+- **中文路径坑（重要）**：`cv2.imread` / `cv2.imwrite` 对含中文路径会静默失败。本项目用 `_imread_unicode()`（读）与 `_imwrite_unicode()`（写）替代；**新增图像 I/O 请复用这两个函数**。本项目目录全为中文，务必遵守。
+- 环境变量在 PowerShell 用 `$env:VAR="1"`，bash 用 `export VAR=1`。
 
-检查 `output/{案例名称}/` 下产出完整：
+### 本机（Windows / E:\毕业论文）备注
+- venv：`E:\毕业论文\.venv`（Python 3.12.10，含 torch cu128 / RTX 5060 / shapely）。
+- 阶段B模型缓存：`E:\毕业论文\.venv\hf_cache\model_download`。
+- 阶段A API：`config/deepseek.json`（`deepseek-v4-flash-vision-exp`，`max_tokens=16384`，`thinking_disabled=true`）。
+- 运行示例（PowerShell）：
+  ```powershell
+  $env:HF_HUB_OFFLINE="1"; $env:TRANSFORMERS_OFFLINE="1"; $env:M2F_MODEL_DIR="E:\毕业论文\.venv\hf_cache\model_download"
+  & "E:\毕业论文\.venv\Scripts\python.exe" scripts\run_pipeline.py --dry-run
+  ```
 
-| 文件 | 说明 |
-|------|------|
-| `features.json` | 56 个特征，英文 key（核心，程序读取） |
-| `features_cn.json` | 56 个特征，中文 key + 单位（人类阅读） |
-| `features.csv` | 同样数据的表格版（Excel 友好） |
-| `plan_binary.png` | 平面图二值化（白底黑线） |
-| `seg_semantic_01.png` | 人视角 1 语义分割纯色图 |
-| `seg_overlay_01.png` | 人视角 1 语义分割叠加图（带图例标注） |
-| `seg_semantic_02.png` | 人视角 2 语义分割纯色图（如有第二张照片） |
-| `seg_overlay_02.png` | 人视角 2 语义分割叠加图（带图例标注） |
+## 五、启动流程（交互预览，每次触发都走这套）
 
-**输入侧保留：**
+**规范的首次交互**——自动检测状态，先给用户概览，经确认再动手：
 
-| 文件 | 说明 |
-|------|------|
-| `input/{案例}/llm_understanding.json` | 阶段 A 的 LLM 理解原始数据 |
+1. **打印引导词**：如「空间特征提取管线启动，正在检测 input 下所有空间单元的处理状态…」。
+2. **运行概览**（只读、不执行）：
+   ```bash
+   python scripts/run_pipeline.py --dry-run
+   ```
+   它会输出：全体单元状态表（`阶段A=√/× 阶段B=√/× → 需阶段A/阶段B/已完成`）+ **聚合汇总**（共 N 单元，A 完成 X/B 完成 Y，各阶段缺口）。
+3. **呈现给用户**：以上述表格 + 汇总的形式展示"哪些已处理、哪些未处理"。
+4. **询问确认**：是否开始处理未完成内容？默认只处理新增/缺漏（增量幂等）。
+   - 也可直接用 `--interactive` 让管道自己暂停询问：
+     ```bash
+     python scripts/run_pipeline.py --interactive
+     ```
+5. **执行**：确认后运行 `run_pipeline.py`（默认 all，或 `--phase a` / `--phase b` / `--unit {项目}/{单元}`）。完成后向用户汇报特征数量与关键数值。
 
-向用户汇报特征数量和关键数值（面积、座位数、围合度、主色调等），确认数据合理。
-
-## 批量处理
-
-当用户要批量处理时：
+## 六、标准执行流程（run_pipeline.py 为主线）
 
 ```bash
-SKILL="~/.catpaw/skills/space-feature-extractor"
-
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-python3 $SKILL/scripts/batch_analyze.py \
-  --input-dir "$SKILL/input" \
-  --output-dir "$SKILL/output"
+python scripts/run_pipeline.py --dry-run         # 概览（状态表 + 汇总）
+python scripts/run_pipeline.py --phase a          # 只补跑缺阶段A的单元
+python scripts/run_pipeline.py --phase b          # 只补跑已有阶段A、缺阶段B的单元
+python scripts/run_pipeline.py                     # all：缺什么补什么（默认）
+python scripts/run_pipeline.py --interactive      # 概览后暂停询问再执行
+python scripts/run_pipeline.py --unit 1-北京盈科中心/北京盈科中心-05   # 指定单元
+python scripts/run_pipeline.py --force            # 忽略已完成，强制重跑
+python scripts/run_pipeline.py --report           # 阶段B额外生成 HTML 报告
 ```
 
-只跑单个案例：加 `--case 案例01_WeWork`
+管道自动：扫 `input/{项目}/{单元}` → 检查 `output/.../llm_understanding.json`（阶段A）与 `features.json`（阶段B）是否存在 → 缺则调对应脚本补跑 → 写结果到 `output/{项目}/{单元}/` → 回写 `manifest.csv` 状态。**重复运行只处理新增，流程恒定。**
 
-该脚本遍历 `input/` 下所有子文件夹，依次执行阶段 B。阶段 A 需要 LLM 看图，批量模式下每个案例的 `llm_understanding.json` 需要提前生成好（可以逐个跑，也可以让用户分批喂图）。
+### 两个阶段到底做什么（供理解，不用手动跑）
+- **阶段 A** = `llm_phase_a.py`（DeepSeek 看图 → 38 语义特征）+ `dxf_parser.py`（DXF 精确几何：长宽/净面积/围合度/家具，覆盖进 JSON）。
+- **阶段 B** = `space_analyzer.py`（OpenCV 平面几何 5 特征 + Mask2Former 8 语义面积 + OpenCV 感知 6 特征，共 56 特征）。
 
-## 字段参考
+## 七、数据管理（新增单元 / 状态追踪）
 
-完整的 56 个字段的中英文对照表和基准值说明，见 `references/feature_dictionary.json`。
+- **input 只放人工素材**；**output 放全部生成内容**，两者严格镜像。
+- **`manifest.csv` 是唯一管理文件**：记录每单元 `状态(待分析/阶段A完成/阶段B完成)`。`run_pipeline.py` 每次跑完**自动回写**状态；`gen_manifest.py` 重跑时**保留已有状态**（不会重置）。
+- 状态语义：`待分析`=未处理；`阶段A完成`=语义+几何就绪；`阶段B完成`=全流程完成（数据就绪）。
+- `input_rename_map.csv` 为派生工具产物（重命名阶段用，已归档；新增单元时由 `gen_manifest.py` 重生成）。
+- **新增单元素材三步**（幂等、可反复）：
+  ```bash
+  python scripts/gen_manifest.py       # ① 扫 input，更新 manifest（保留状态）+ 重生成改名映射
+  python scripts/apply_restructure.py  # ② 标准化命名 + 补 output 骨架（可 --dry-run 预览）
+  python scripts/run_pipeline.py       # ③ 增量分析新增
+  ```
 
-## 注意事项
+## 八、字段参考
 
-- **DXF vs 家具标定法**：DXF 精确解析误差±0，家具标定法约±10-20%。强烈建议提供 DXF 文件
-- **DWG 不可用**：仅支持 DXF 格式。DWG 是 Autodesk 私有二进制格式，macOS 上无可靠的开源解析工具。用户需在 CAD 软件中"另存为 → DXF"
-- **HuggingFace 离线模式**：运行时务必设置 `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1`，否则模型加载会尝试联网检查更新，在网络不通时会卡在超时等待上（可能多等 10+ 分钟）
-- **平面图格式**：应为标准化白底黑线工程图，脚本会自动检测底色方向并正确处理
-- Mask2Former 使用 ADE20K 150 类语义，合并为 8 组；识别精度受图片清晰度和拍摄角度影响
-- 色温的 LLM 判读值和 CV 计算值可能有差异（LLM 综合理解 vs CV 纯像素），两个都保留供对比
-- 建议透视照从两个不同角度拍摄，覆盖空间全貌，避免局部特写
+- 完整字段总表（按分析维度分组，含单位/来源/所属聚类维度，**重点**）：`references/特征字段总表.md`
+- 中英文对照与基准值：`references/feature_dictionary.json`。
+- 命名/目录规范：`references/目录结构与命名规范.md`。阶段A prompt 模板：`references/llm_prompt_template.md`。
+
+## 九、注意事项
+
+- **DXF vs 家具标定法**：DXF 精确（净面积经"内圈孔洞多边形"排除凹口/墙厚，围合度基于 墙/(墙+虚线) 恒 0-1）；无 DXF 时 LLM 目测误差 ±10-20%。
+- **净面积口径**：采用"围合墙体面域"（排除 L 形凹口），见 `dxf_parser.compute_enclosed_area`；`_meta.area_method` 标记 `enclosed`/`outer`（开放空间兜底）。
+- **围合度口径**：`wall_len/(wall_len+虚线_len)`，恒 ∈[0,1]。
+- **DWG 不支持**：仅 DXF（CAD 中"另存为 DXF"）。
+- **HuggingFace 离线**：阶段B前务必设 `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1`。
+- **推荐**不同角度多张透视照，覆盖空间全貌；平面图应为白底黑线标准工程图。

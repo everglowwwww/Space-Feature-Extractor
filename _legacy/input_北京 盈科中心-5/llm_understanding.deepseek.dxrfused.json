@@ -1,0 +1,177 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(18段)、桌子(4段)、柜子(2段)、虚线(3段)、墙体(5段)",
+        "空间尺寸 DXF=9.70×4.70m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长23.50m/总周长28.80m=0.82。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27"
+  },
+  "空间基本信息": {
+    "space_name": "北京 盈科中心-5 共享办公区",
+    "space_type": "共享办公-开放工位区",
+    "space_type_en": "coworking-open-desk-area"
+  },
+  "空间绝对尺度": {
+    "length_m": 9.7,
+    "width_m": 4.7,
+    "ceiling_height_m": 3.2,
+    "net_floor_area_m2": 45.59,
+    "volume_m3": 145.89
+  },
+  "围护结构": {
+    "num_windows": 1,
+    "window_wall_ratio": 0.12,
+    "num_doors": 1,
+    "perimeter_m": 28.8,
+    "enclosure_ratio": 0.82
+  },
+  "空间比例": {
+    "height_width_ratio": 0.68,
+    "length_width_ratio": 2.06
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 18,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×2.00",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.00×2.00",
+        "footprint_m2": 2.0,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.50×2.06",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.50×2.06",
+        "footprint_m2": 1.029,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.50×2.24",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.50×2.24",
+        "footprint_m2": 1.121,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.50×3.50",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.50×3.50",
+        "footprint_m2": 1.75,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×1.60",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "1.00×1.60",
+        "footprint_m2": 1.6,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 11.98,
+    "total_seats": 18,
+    "furniture_density": 0.26,
+    "seating_density_per_m2": 0.39
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "亮黄色",
+        "hex": "#F2C230",
+        "pantone_approx": "Pantone 123 C",
+        "ral_approx": "RAL 1018",
+        "area_pct": 30,
+        "location": "主要墙面"
+      },
+      {
+        "rank": 2,
+        "color_name": "浅木色",
+        "hex": "#D9B68C",
+        "pantone_approx": "Pantone 466 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 25,
+        "location": "家具及装饰墙"
+      },
+      {
+        "rank": 3,
+        "color_name": "深灰色",
+        "hex": "#4A4A4A",
+        "pantone_approx": "Pantone 425 C",
+        "ral_approx": "RAL 7016",
+        "area_pct": 20,
+        "location": "储物柜及部分墙面"
+      },
+      {
+        "rank": 4,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone 663 C",
+        "ral_approx": "RAL 9016",
+        "area_pct": 15,
+        "location": "天花板及地面"
+      },
+      {
+        "rank": 5,
+        "color_name": "深蓝色",
+        "hex": "#2C3E50",
+        "pantone_approx": "Pantone 296 C",
+        "ral_approx": "RAL 5003",
+        "area_pct": 5,
+        "location": "座椅点缀"
+      },
+      {
+        "rank": 6,
+        "color_name": "绿色",
+        "hex": "#4A7C59",
+        "pantone_approx": "Pantone 357 C",
+        "ral_approx": "RAL 6005",
+        "area_pct": 5,
+        "location": "抱枕及植物"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "撞色活力（亮黄与深灰对比，辅以原木色）",
+    "primary_floor_material": "浅色木纹地板",
+    "primary_wall_material": "黄色烤漆玻璃/木板",
+    "primary_ceiling_material": "白色石膏板（局部裸露管道）"
+  },
+  "光环境": {
+    "lighting_type": "吊灯（藤编/金属网罩）及轨道射灯",
+    "num_visible_lights": 8,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.03
+  },
+  "空间感知指标": {
+    "openness_score": 0.7,
+    "privacy_score": 0.3,
+    "estimated_RT60_s": 0.8
+  }
+}

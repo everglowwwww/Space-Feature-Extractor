@@ -1,0 +1,169 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：虚线(10段)、墙体(10段)、椅子(18段)、桌子(2段)",
+        "空间尺寸 DXF=13.95×4.50m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长29.20m/总周长36.90m=0.62。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京盈科中心-08 共享办公区",
+    "space_type": "共享办公-休闲协作区",
+    "space_type_en": "coworking-lounge"
+  },
+  "空间绝对尺度": {
+    "length_m": 13.95,
+    "width_m": 4.5,
+    "ceiling_height_m": 3.2,
+    "net_floor_area_m2": 54.83,
+    "volume_m3": 175.46
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 1,
+    "perimeter_m": 36.9,
+    "enclosure_ratio": 0.62
+  },
+  "空间比例": {
+    "height_width_ratio": 0.71,
+    "length_width_ratio": 3.1
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 16,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×6.80",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.00×6.80",
+        "footprint_m2": 6.8,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.60×1.30",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.60×1.30",
+        "footprint_m2": 0.78,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.80×2.00",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "0.80×2.00",
+        "footprint_m2": 1.6,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.67×0.80",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "0.67×0.80",
+        "footprint_m2": 0.536,
+        "seats": 1,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 12.28,
+    "total_seats": 35,
+    "furniture_density": 0.22,
+    "seating_density_per_m2": 0.64
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "芥末黄",
+        "hex": "#D4A017",
+        "pantone_approx": "Pantone 7554 C",
+        "ral_approx": "RAL 1005",
+        "area_pct": 30,
+        "location": "背景墙/隔断"
+      },
+      {
+        "rank": 2,
+        "color_name": "原木色",
+        "hex": "#C19A6B",
+        "pantone_approx": "Pantone 4655 C",
+        "ral_approx": "RAL 8001",
+        "area_pct": 25,
+        "location": "地板、置物架、桌面"
+      },
+      {
+        "rank": 3,
+        "color_name": "黑色",
+        "hex": "#1A1A1A",
+        "pantone_approx": "Pantone Black 6 C",
+        "ral_approx": "RAL 9005",
+        "area_pct": 15,
+        "location": "金属框架、门框、天花管线"
+      },
+      {
+        "rank": 4,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone 663 C",
+        "ral_approx": "RAL 9016",
+        "area_pct": 15,
+        "location": "天花、桌面"
+      },
+      {
+        "rank": 5,
+        "color_name": "青绿色",
+        "hex": "#5F9EA0",
+        "pantone_approx": "Pantone 7474 C",
+        "ral_approx": "RAL 5024",
+        "area_pct": 10,
+        "location": "椅子"
+      },
+      {
+        "rank": 6,
+        "color_name": "植物绿",
+        "hex": "#4A7C59",
+        "pantone_approx": "Pantone 7734 C",
+        "ral_approx": "RAL 6021",
+        "area_pct": 5,
+        "location": "绿植"
+      }
+    ],
+    "color_temperature_K": 3500,
+    "color_scheme": "暖中性色调，辅以芥末黄和青绿色点缀，营造活力且温馨的氛围",
+    "primary_floor_material": "浅色木地板",
+    "primary_wall_material": "黄色半透明玻璃/亚克力板与木质置物架",
+    "primary_ceiling_material": "白色石膏板，局部裸露管线"
+  },
+  "光环境": {
+    "lighting_type": "藤编吊灯、轨道射灯",
+    "num_visible_lights": 8,
+    "estimated_illuminance_lux": 400,
+    "daylight_factor_est": 0.02
+  },
+  "空间感知指标": {
+    "openness_score": 0.7,
+    "privacy_score": 0.3,
+    "estimated_RT60_s": 0.8
+  }
+}

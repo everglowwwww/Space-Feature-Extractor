@@ -1,0 +1,133 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：墙体(10段)、椅子(3段)、玻璃(1段)、虚线(2段)",
+        "空间尺寸 DXF=3.40×2.70m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长16.40m/总周长12.20m=0.93。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京望京国际中心-02",
+    "space_type": "共享办公-会议室",
+    "space_type_en": "meeting-room"
+  },
+  "空间绝对尺度": {
+    "length_m": 3.4,
+    "width_m": 2.7,
+    "ceiling_height_m": 2.8,
+    "net_floor_area_m2": 6.89,
+    "volume_m3": 19.29
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 1,
+    "perimeter_m": 12.2,
+    "enclosure_ratio": 0.93
+  },
+  "空间比例": {
+    "height_width_ratio": 1.04,
+    "length_width_ratio": 1.26
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "边几",
+        "layer": "椅子",
+        "count": 3,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 0,
+        "material": "金属"
+      }
+    ],
+    "total_furniture_footprint_m2": 0.48,
+    "total_seats": 8,
+    "furniture_density": 0.07,
+    "seating_density_per_m2": 1.16
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "芥末黄",
+        "hex": "#E8A33D",
+        "pantone_approx": "Pantone 130 C",
+        "ral_approx": "RAL 1003",
+        "area_pct": 40,
+        "location": "墙面"
+      },
+      {
+        "rank": 2,
+        "color_name": "原木色",
+        "hex": "#C8A27A",
+        "pantone_approx": "Pantone 465 C",
+        "ral_approx": "RAL 8001",
+        "area_pct": 20,
+        "location": "墙裙/护墙板"
+      },
+      {
+        "rank": 3,
+        "color_name": "深灰色",
+        "hex": "#3A3A3A",
+        "pantone_approx": "Pantone 447 C",
+        "ral_approx": "RAL 7016",
+        "area_pct": 15,
+        "location": "门框/桌台/装饰线条"
+      },
+      {
+        "rank": 4,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone Cool Gray 1 C",
+        "ral_approx": "RAL 9003",
+        "area_pct": 15,
+        "location": "天花板/白板"
+      },
+      {
+        "rank": 5,
+        "color_name": "蓝色",
+        "hex": "#4A7A9B",
+        "pantone_approx": "Pantone 7459 C",
+        "ral_approx": "RAL 5024",
+        "area_pct": 5,
+        "location": "装饰画"
+      },
+      {
+        "rank": 6,
+        "color_name": "浅灰色",
+        "hex": "#D3D3D3",
+        "pantone_approx": "Pantone 428 C",
+        "ral_approx": "RAL 7035",
+        "area_pct": 5,
+        "location": "座椅织物"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "暖黄活力色调",
+    "primary_floor_material": "灰色地毯",
+    "primary_wall_material": "涂料/木饰面",
+    "primary_ceiling_material": "白色石膏板"
+  },
+  "光环境": {
+    "lighting_type": "吊灯/线性灯带",
+    "num_visible_lights": 3,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.0
+  },
+  "空间感知指标": {
+    "openness_score": 0.3,
+    "privacy_score": 0.8,
+    "estimated_RT60_s": 0.6
+  }
+}

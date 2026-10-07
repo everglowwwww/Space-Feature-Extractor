@@ -1,0 +1,151 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：柜子(1段)、椅子(10段)、桌子(1段)、玻璃(7段)、墙体(7段)、虚线(1段)",
+        "空间尺寸 DXF=5.20×3.20m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长17.80m/总周长16.80m=0.96。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京三里屯11号-01",
+    "space_type": "共享办公-会议室",
+    "space_type_en": "meeting-room"
+  },
+  "空间绝对尺度": {
+    "length_m": 5.2,
+    "width_m": 3.2,
+    "ceiling_height_m": 2.8,
+    "net_floor_area_m2": 13.22,
+    "volume_m3": 37.02
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 1,
+    "perimeter_m": 16.8,
+    "enclosure_ratio": 0.96
+  },
+  "空间比例": {
+    "height_width_ratio": 0.87,
+    "length_width_ratio": 1.62
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "柜子 0.30×1.00",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.30×1.00",
+        "footprint_m2": 0.3,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 10,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×2.80",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.00×2.80",
+        "footprint_m2": 2.8,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 4.7,
+    "total_seats": 10,
+    "furniture_density": 0.36,
+    "seating_density_per_m2": 0.76
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "深青色",
+        "hex": "#1F4E4A",
+        "pantone_approx": "Pantone 3435 C",
+        "ral_approx": "RAL 6004",
+        "area_pct": 35,
+        "location": "墙面软包"
+      },
+      {
+        "rank": 2,
+        "color_name": "暖白色",
+        "hex": "#F5F5F0",
+        "pantone_approx": "Pantone 7499 C",
+        "ral_approx": "RAL 9010",
+        "area_pct": 25,
+        "location": "天花板与白板"
+      },
+      {
+        "rank": 3,
+        "color_name": "深灰色",
+        "hex": "#3A3A3A",
+        "pantone_approx": "Pantone 447 C",
+        "ral_approx": "RAL 7016",
+        "area_pct": 15,
+        "location": "会议桌桌面"
+      },
+      {
+        "rank": 4,
+        "color_name": "浅灰色",
+        "hex": "#C8C8C8",
+        "pantone_approx": "Pantone 428 C",
+        "ral_approx": "RAL 7035",
+        "area_pct": 10,
+        "location": "椅子织物"
+      },
+      {
+        "rank": 5,
+        "color_name": "浅木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 4665 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 8,
+        "location": "电视柜"
+      },
+      {
+        "rank": 6,
+        "color_name": "黑色",
+        "hex": "#000000",
+        "pantone_approx": "Pantone Black 6 C",
+        "ral_approx": "RAL 9005",
+        "area_pct": 7,
+        "location": "门框与窗框"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "现代深色商务",
+    "primary_floor_material": "浅色木地板",
+    "primary_wall_material": "织物软包",
+    "primary_ceiling_material": "白色涂料"
+  },
+  "光环境": {
+    "lighting_type": "线性吊灯与球形吊灯",
+    "num_visible_lights": 4,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": -1
+  },
+  "空间感知指标": {
+    "openness_score": 0.4,
+    "privacy_score": 0.8,
+    "estimated_RT60_s": 0.7
+  }
+}

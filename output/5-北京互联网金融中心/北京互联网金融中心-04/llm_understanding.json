@@ -1,0 +1,160 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(2段)、桌子(2段)、墙体(15段)、虚线(1段)",
+        "空间尺寸 DXF=4.50×4.20m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长22.60m/总周长17.40m=0.95。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京互联网金融中心-04 休闲协作区",
+    "space_type": "共享办公-休闲协作区",
+    "space_type_en": "coworking-lounge"
+  },
+  "空间绝对尺度": {
+    "length_m": 4.5,
+    "width_m": 4.2,
+    "ceiling_height_m": 2.8,
+    "net_floor_area_m2": 15.78,
+    "volume_m3": 44.18
+  },
+  "围护结构": {
+    "num_windows": 1,
+    "window_wall_ratio": 0.15,
+    "num_doors": 1,
+    "perimeter_m": 17.4,
+    "enclosure_ratio": 0.95
+  },
+  "空间比例": {
+    "height_width_ratio": 0.67,
+    "length_width_ratio": 1.07
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.60×0.90",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "0.60×0.90",
+        "footprint_m2": 0.54,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.30×1.30",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.30×1.30",
+        "footprint_m2": 1.69,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 3.30×3.70",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "3.30×3.70",
+        "footprint_m2": 12.21,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.40×0.60",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.40×0.60",
+        "footprint_m2": 0.24,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 14.68,
+    "total_seats": 7,
+    "furniture_density": 0.93,
+    "seating_density_per_m2": 0.44
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "白色",
+        "hex": "#F5F5F5",
+        "pantone_approx": "Pantone 11-0601 TCX",
+        "ral_approx": "RAL 9010",
+        "area_pct": 40,
+        "location": "墙面与天花"
+      },
+      {
+        "rank": 2,
+        "color_name": "深蓝色",
+        "hex": "#1A2A6C",
+        "pantone_approx": "Pantone 2758 C",
+        "ral_approx": "RAL 5002",
+        "area_pct": 20,
+        "location": "沙发座面"
+      },
+      {
+        "rank": 3,
+        "color_name": "橙黄色",
+        "hex": "#F5A623",
+        "pantone_approx": "Pantone 1375 C",
+        "ral_approx": "RAL 1006",
+        "area_pct": 15,
+        "location": "墙面装饰画与靠枕"
+      },
+      {
+        "rank": 4,
+        "color_name": "浅木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 14-1116 TCX",
+        "ral_approx": "RAL 1001",
+        "area_pct": 15,
+        "location": "地面与家具框架"
+      },
+      {
+        "rank": 5,
+        "color_name": "绿色",
+        "hex": "#4CAF50",
+        "pantone_approx": "Pantone 361 C",
+        "ral_approx": "RAL 6018",
+        "area_pct": 5,
+        "location": "墙面装饰画与植物"
+      },
+      {
+        "rank": 6,
+        "color_name": "透明玻璃色",
+        "hex": "#E0E0E0",
+        "pantone_approx": "Pantone Cool Gray 1 C",
+        "ral_approx": "RAL 7035",
+        "area_pct": 5,
+        "location": "玻璃隔断与玻璃砖"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "现代活力撞色，以白色为底，辅以深蓝、橙黄和绿色点缀",
+    "primary_floor_material": "浅色木地板",
+    "primary_wall_material": "白色涂料墙面",
+    "primary_ceiling_material": "白色平顶天花"
+  },
+  "光环境": {
+    "lighting_type": "吊灯与线性灯带",
+    "num_visible_lights": 3,
+    "estimated_illuminance_lux": 300,
+    "daylight_factor_est": 0.03
+  },
+  "空间感知指标": {
+    "openness_score": 0.6,
+    "privacy_score": 0.4,
+    "estimated_RT60_s": 0.7
+  }
+}

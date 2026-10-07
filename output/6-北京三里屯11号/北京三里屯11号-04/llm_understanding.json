@@ -1,0 +1,169 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(10段)、桌子(1段)、柜子(3段)、玻璃(7段)、墙体(5段)、虚线(1段)",
+        "空间尺寸 DXF=4.90×4.20m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长15.64m/总周长18.20m=0.95。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京三里屯11号-04",
+    "space_type": "共享办公-会议室",
+    "space_type_en": "meeting-room"
+  },
+  "空间绝对尺度": {
+    "length_m": 4.9,
+    "width_m": 4.2,
+    "ceiling_height_m": 3.2,
+    "net_floor_area_m2": 16.97,
+    "volume_m3": 54.3
+  },
+  "围护结构": {
+    "num_windows": 1,
+    "window_wall_ratio": 0.25,
+    "num_doors": 1,
+    "perimeter_m": 18.2,
+    "enclosure_ratio": 0.95
+  },
+  "空间比例": {
+    "height_width_ratio": 0.76,
+    "length_width_ratio": 1.17
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 10,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×2.50",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.00×2.50",
+        "footprint_m2": 2.5,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.40×1.00",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.40×1.00",
+        "footprint_m2": 0.4,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "矮柜",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.34×1.15",
+        "footprint_m2": 0.391,
+        "seats": 0,
+        "material": "浅黄色木质"
+      },
+      {
+        "type": "柜子 0.34×2.40",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.34×2.40",
+        "footprint_m2": 0.816,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 5.71,
+    "total_seats": 10,
+    "furniture_density": 0.34,
+    "seating_density_per_m2": 0.59
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "白色",
+        "hex": "#F0F0F0",
+        "pantone_approx": "Pantone 11-0601 TCX",
+        "ral_approx": "RAL 9016",
+        "area_pct": 40,
+        "location": "墙面与天花"
+      },
+      {
+        "rank": 2,
+        "color_name": "灰色",
+        "hex": "#808080",
+        "pantone_approx": "Pantone 17-4402 TCX",
+        "ral_approx": "RAL 7035",
+        "area_pct": 25,
+        "location": "软包墙面与座椅"
+      },
+      {
+        "rank": 3,
+        "color_name": "深灰色",
+        "hex": "#404040",
+        "pantone_approx": "Pantone 19-4005 TCX",
+        "ral_approx": "RAL 7016",
+        "area_pct": 15,
+        "location": "会议桌桌面"
+      },
+      {
+        "rank": 4,
+        "color_name": "浅黄色",
+        "hex": "#F5E6C8",
+        "pantone_approx": "Pantone 12-0712 TCX",
+        "ral_approx": "RAL 1015",
+        "area_pct": 10,
+        "location": "矮柜"
+      },
+      {
+        "rank": 5,
+        "color_name": "绿色",
+        "hex": "#2E8B57",
+        "pantone_approx": "Pantone 17-5641 TCX",
+        "ral_approx": "RAL 6021",
+        "area_pct": 5,
+        "location": "地面地毯"
+      },
+      {
+        "rank": 6,
+        "color_name": "黑色",
+        "hex": "#000000",
+        "pantone_approx": "Pantone 19-0303 TCX",
+        "ral_approx": "RAL 9005",
+        "area_pct": 5,
+        "location": "窗框与门框"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "现代简约冷灰调",
+    "primary_floor_material": "绿色地毯",
+    "primary_wall_material": "白色涂料与灰色织物软包",
+    "primary_ceiling_material": "白色石膏板"
+  },
+  "光环境": {
+    "lighting_type": "球形吊灯",
+    "num_visible_lights": 2,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.035
+  },
+  "空间感知指标": {
+    "openness_score": 0.5,
+    "privacy_score": 0.8,
+    "estimated_RT60_s": 0.7
+  }
+}

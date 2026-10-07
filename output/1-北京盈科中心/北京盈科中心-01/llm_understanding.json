@@ -1,0 +1,169 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(34段)、桌子(3段)、墙体(14段)、柜子(2段)、虚线(2段)",
+        "空间尺寸 DXF=14.40×8.60m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长51.24m/总周长46.00m=0.94。净面积采用enclosed（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "enclosed"
+  },
+  "空间基本信息": {
+    "space_name": "北京盈科中心-01",
+    "space_type": "共享办公-多功能厅",
+    "space_type_en": "coworking-multifunction-hall"
+  },
+  "空间绝对尺度": {
+    "length_m": 14.4,
+    "width_m": 8.6,
+    "ceiling_height_m": 3.2,
+    "net_floor_area_m2": 109.86,
+    "volume_m3": 351.55
+  },
+  "围护结构": {
+    "num_windows": 0,
+    "window_wall_ratio": -1,
+    "num_doors": 2,
+    "perimeter_m": 46.0,
+    "enclosure_ratio": 0.94
+  },
+  "空间比例": {
+    "height_width_ratio": 0.37,
+    "length_width_ratio": 1.67
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 34,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 2.00×4.40",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "2.00×4.40",
+        "footprint_m2": 8.8,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×3.60",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.00×3.60",
+        "footprint_m2": 3.6,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.60×1.20",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.60×1.20",
+        "footprint_m2": 0.72,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.50×5.40",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.50×5.40",
+        "footprint_m2": 2.7,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 30.06,
+    "total_seats": 30,
+    "furniture_density": 0.27,
+    "seating_density_per_m2": 0.27
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "深蓝",
+        "hex": "#1A3A5C",
+        "pantone_approx": "Pantone 296 C",
+        "ral_approx": "RAL 5003",
+        "area_pct": 30,
+        "location": "天花彩绘背景"
+      },
+      {
+        "rank": 2,
+        "color_name": "浅蓝",
+        "hex": "#7FB3D5",
+        "pantone_approx": "Pantone 2915 C",
+        "ral_approx": "RAL 5024",
+        "area_pct": 20,
+        "location": "天花彩绘云朵"
+      },
+      {
+        "rank": 3,
+        "color_name": "深灰",
+        "hex": "#2C2C2C",
+        "pantone_approx": "Pantone Black 7 C",
+        "ral_approx": "RAL 9005",
+        "area_pct": 15,
+        "location": "墙面"
+      },
+      {
+        "rank": 4,
+        "color_name": "浅木色",
+        "hex": "#E8D8B0",
+        "pantone_approx": "Pantone 7500 C",
+        "ral_approx": "RAL 1001",
+        "area_pct": 15,
+        "location": "桌面"
+      },
+      {
+        "rank": 5,
+        "color_name": "白色",
+        "hex": "#F0F0F0",
+        "pantone_approx": "Pantone 663 C",
+        "ral_approx": "RAL 9010",
+        "area_pct": 10,
+        "location": "投影幕布/墙面装饰"
+      },
+      {
+        "rank": 6,
+        "color_name": "青绿",
+        "hex": "#4A9E9E",
+        "pantone_approx": "Pantone 7474 C",
+        "ral_approx": "RAL 5021",
+        "area_pct": 10,
+        "location": "座椅点缀"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "海洋主题冷色调，深蓝与浅蓝对比，辅以深灰墙面和浅木色桌面",
+    "primary_floor_material": "浅色地毯",
+    "primary_wall_material": "深色涂料/玻璃隔断",
+    "primary_ceiling_material": "石膏板彩绘"
+  },
+  "光环境": {
+    "lighting_type": "嵌入式筒灯+投影仪",
+    "num_visible_lights": 12,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.0
+  },
+  "空间感知指标": {
+    "openness_score": 0.6,
+    "privacy_score": 0.8,
+    "estimated_RT60_s": 0.8
+  }
+}

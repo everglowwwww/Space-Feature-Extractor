@@ -1,0 +1,340 @@
+{
+  "_meta": {
+    "source": "DXF精确解析 + 多模态LLM空间理解",
+    "method": "尺度数据来自DXF精确解析（ezdxf, 单位=米, $INSUNITS=6）；语义数据来自LLM视觉分析透视照",
+    "scale_calibration": {
+      "reference_object": "DXF文件（精确几何坐标，单位=米，$INSUNITS=6）",
+      "reference_real_size_m": null,
+      "reference_pixel_size_avg": null,
+      "scale_m_per_px": null,
+      "cross_validation": [
+        "DXF图层结构：椅子(54段)、虚线(7段)、桌子(19段)、墙体(28段)、柜子(5段)、玻璃(7段)",
+        "空间尺寸 DXF=24.10×18.14m"
+      ]
+    },
+    "confidence_note": "尺度数据精度±0，来自DXF精确坐标。围合度基于DXF图层：墙体层总长85.41m/总周长84.47m=0.88。净面积采用outer（内圈孔洞多边形=排除凹口与墙厚；外圈轮廓=开放空间兜底）。语义数据来自LLM视觉分析，精度受图片质量影响。",
+    "timestamp": "2023-10-27",
+    "area_method": "outer"
+  },
+  "空间基本信息": {
+    "space_name": "北京望京国际中心-05",
+    "space_type": "共享办公-休闲协作区",
+    "space_type_en": "coworking-lounge"
+  },
+  "空间绝对尺度": {
+    "length_m": 24.1,
+    "width_m": 18.14,
+    "ceiling_height_m": 3.2,
+    "net_floor_area_m2": 114.99,
+    "volume_m3": 367.97
+  },
+  "围护结构": {
+    "num_windows": 8,
+    "window_wall_ratio": 0.45,
+    "num_doors": 2,
+    "perimeter_m": 84.47,
+    "enclosure_ratio": 0.88
+  },
+  "空间比例": {
+    "height_width_ratio": 0.18,
+    "length_width_ratio": 1.33
+  },
+  "家具配置": {
+    "furniture_groups": [
+      {
+        "type": "椅子 0.40×0.40",
+        "layer": "椅子",
+        "count": 26,
+        "dimensions_m": "0.40×0.40",
+        "footprint_m2": 0.16,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.20×2.53",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.20×2.53",
+        "footprint_m2": 3.041,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.40×2.00",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.40×2.00",
+        "footprint_m2": 0.8,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 1.00×1.00",
+        "layer": "椅子",
+        "count": 8,
+        "dimensions_m": "1.00×1.00",
+        "footprint_m2": 1.0,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.80×0.80",
+        "layer": "椅子",
+        "count": 8,
+        "dimensions_m": "0.80×0.80",
+        "footprint_m2": 0.64,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.80×1.20",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "0.80×1.20",
+        "footprint_m2": 0.96,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.40×2.84",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.40×2.84",
+        "footprint_m2": 1.136,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.60×0.60",
+        "layer": "桌子",
+        "count": 2,
+        "dimensions_m": "0.60×0.60",
+        "footprint_m2": 0.36,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 1.00×3.40",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "1.00×3.40",
+        "footprint_m2": 3.4,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "椅子 1.00×1.84",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "1.00×1.84",
+        "footprint_m2": 1.841,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.30×2.00",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.30×2.00",
+        "footprint_m2": 0.6,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 1.00×2.92",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "1.00×2.92",
+        "footprint_m2": 2.919,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "椅子 1.00×3.00",
+        "layer": "椅子",
+        "count": 1,
+        "dimensions_m": "1.00×3.00",
+        "footprint_m2": 3.0,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.50×7.80",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.50×7.80",
+        "footprint_m2": 3.9,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.50×8.00",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.50×8.00",
+        "footprint_m2": 4.0,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×1.80",
+        "layer": "桌子",
+        "count": 3,
+        "dimensions_m": "1.00×1.80",
+        "footprint_m2": 1.8,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.53×1.60",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.53×1.60",
+        "footprint_m2": 0.847,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "椅子 0.60×1.60",
+        "layer": "椅子",
+        "count": 8,
+        "dimensions_m": "0.60×1.60",
+        "footprint_m2": 0.96,
+        "seats": 1,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.00×1.60",
+        "layer": "桌子",
+        "count": 4,
+        "dimensions_m": "1.00×1.60",
+        "footprint_m2": 1.6,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 1.25×1.60",
+        "layer": "柜子",
+        "count": 2,
+        "dimensions_m": "1.25×1.60",
+        "footprint_m2": 2.006,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 1.20×1.60",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "1.20×1.60",
+        "footprint_m2": 1.92,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "柜子 0.40×3.60",
+        "layer": "柜子",
+        "count": 1,
+        "dimensions_m": "0.40×3.60",
+        "footprint_m2": 1.44,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 0.90×3.60",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "0.90×3.60",
+        "footprint_m2": 3.24,
+        "seats": 0,
+        "material": ""
+      },
+      {
+        "type": "桌子 1.20×5.80",
+        "layer": "桌子",
+        "count": 1,
+        "dimensions_m": "1.20×5.80",
+        "footprint_m2": 6.96,
+        "seats": 0,
+        "material": ""
+      }
+    ],
+    "total_furniture_footprint_m2": 82.46,
+    "total_seats": 38,
+    "furniture_density": 0.72,
+    "seating_density_per_m2": 0.33
+  },
+  "色彩与材质": {
+    "dominant_colors": [
+      {
+        "rank": 1,
+        "color_name": "暖白",
+        "hex": "#F5F5F0",
+        "pantone_approx": "Pantone 11-0602 TCX",
+        "ral_approx": "RAL 9010",
+        "area_pct": 35,
+        "location": "墙面与天花"
+      },
+      {
+        "rank": 2,
+        "color_name": "原木色",
+        "hex": "#D2B48C",
+        "pantone_approx": "Pantone 14-1116 TCX",
+        "ral_approx": "RAL 1001",
+        "area_pct": 25,
+        "location": "地面与家具桌面"
+      },
+      {
+        "rank": 3,
+        "color_name": "活力红",
+        "hex": "#E63946",
+        "pantone_approx": "Pantone 18-1664 TCX",
+        "ral_approx": "RAL 3020",
+        "area_pct": 15,
+        "location": "地毯与沙发"
+      },
+      {
+        "rank": 4,
+        "color_name": "深蓝",
+        "hex": "#1D3557",
+        "pantone_approx": "Pantone 19-3939 TCX",
+        "ral_approx": "RAL 5003",
+        "area_pct": 10,
+        "location": "地毯与座椅"
+      },
+      {
+        "rank": 5,
+        "color_name": "明黄",
+        "hex": "#F4A261",
+        "pantone_approx": "Pantone 14-0957 TCX",
+        "ral_approx": "RAL 1012",
+        "area_pct": 8,
+        "location": "沙发与装饰"
+      },
+      {
+        "rank": 6,
+        "color_name": "植物绿",
+        "hex": "#2A9D8F",
+        "pantone_approx": "Pantone 17-5641 TCX",
+        "ral_approx": "RAL 6021",
+        "area_pct": 7,
+        "location": "盆栽植物"
+      }
+    ],
+    "color_temperature_K": 4000,
+    "color_scheme": "撞色活力",
+    "primary_floor_material": "木地板与彩色地毯",
+    "primary_wall_material": "白色涂料与玻璃隔断",
+    "primary_ceiling_material": "裸露混凝土与白色喷漆"
+  },
+  "光环境": {
+    "lighting_type": "吊灯与轨道射灯",
+    "num_visible_lights": 30,
+    "estimated_illuminance_lux": 500,
+    "daylight_factor_est": 0.035
+  },
+  "空间感知指标": {
+    "openness_score": 0.7,
+    "privacy_score": 0.3,
+    "estimated_RT60_s": 0.8
+  }
+}
